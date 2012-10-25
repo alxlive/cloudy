@@ -57,14 +57,14 @@ FileHandler objects in the Model take care of downloading the file with the File
 
 Details: Interposing on the Gmail DOM
 =====================================
-This took a bit of reverse engineering and a bunch of trial and error to get right. Essentially, here are the steps that Gmail takes to attach a file:
+Read along if you would like to know how GPicker hijacks into Gmail's obfuscated Javascript logic. This took a bit of reverse engineering and a bunch of trial and error to get right. Essentially, here are the steps that Gmail takes to attach a file:
 
 1. Detect that the user clicked "Attach a file".
 2. Create hidden &lt;input type="file"> element, simulates a click by calling click() on it.
 3. File selection dialog appears. 
 4. When the user selects a file, the hidden element triggers a "change" event, to which Gmail is subscribed. Gmail then gets the element from the event's `currentTarget` field, and uploads each file from the `e.currentTarget.files` array as an attachment.
 
-Here are a few things that failed, and how I solved them/got around them:
+I needed to somehow take over at some point in this sequence, and trick Gmail into attaching a file that came from somewhere else than the local machine. Here are a few problems I encountered, and how I solved them/got around them:
 
 1. Cannot construct File objects
 --------------------------------
@@ -74,8 +74,8 @@ I needed to create an array of File objects to pass to Gmail. Turns out that Fil
 --------------------------------------------
 The first way I thought of cheating Gmail into attaching files of my choosing was to mess with the "change" event that the input element dispatches. Since Gmail uses the event's `e.currentTarget.files`, I just had to somehow set `e.currentTarget` to an element of my choice, which had its `files` field set with my files (see below why I couldn't just set the "files" field directly).  <br><br>
 At first this seemed hard: the currentTarget property gets set when dispatching the event, by the dispatchEvent function. Setting it before that would not make a difference, and after the dispatch the property becomes read-only. <br><br>
-I came up with the following: add a custom element as a child to the `<input>` element, and make the child dispatch a "change" event, letting it eventually buble up and trigger Gmail's event handler. The currentTarget field would then point to the child.  <br><br>
-Unfortunately, this was a dead end -- even though the logic was correct (verified by checking the event's currentTarget after it was dispatched), somehow Gmail still had the correct currentTarget. My guess is that Gmail's event handler function is a closure that stores, in a bound variable, the element to which the listener was attached, and ignores the event's real currentTarget property. 
+I came up with the following: add a custom element as a child to the `<input>` element, and make the child dispatch a "change" event, letting it eventually bubble up and trigger Gmail's event handler. The `currentTarget` field would then point to the child, which I control.  <br><br>
+Unfortunately, this was a dead end -- even though the logic was correct (verified by checking the event's currentTarget after it was dispatched), somehow Gmail still had the correct currentTarget. My guess is that Gmail's event handler function is a closure that stores, in a bound variable, the element to which the listener was attached, and ignores the event's real `currentTarget` property. 
 
 3. Cannot set a `<input type="file">` element's "file" property
 ------------------------------------------------------------------
