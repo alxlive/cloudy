@@ -19,7 +19,7 @@ If instead you would like to play around with the code and install your local ve
 3. Click "Load unpacked extension..."
 4. Choose the `chrome` directory in this repo.
 5. Enable the newly added extension.
-6. Head over to your Gmail account, click "Compose" and you should see a small cloud icon next to the "Attach a file" link. Click it and you'll be presented with a Filepicker.io window to select files from the cloud. 
+6. Head over to your Gmail account, click "Compose" and you should see a small cloud icon next to the "Attach a file" link. Click the link and you'll be presented with a Filepicker.io window to select files from the cloud. 
 
 
 Extension Architecture
@@ -42,7 +42,7 @@ GPicker doesn't really use any custom css. I kept `main.css` as part of Gmailr.
 
 chrome/images
 -------------
-The images used in the project, as well as some other that could be used.
+The images used in the project, as well as some others that could be used.
 
 chrome/templates
 ----------------
@@ -57,25 +57,31 @@ FileHandler objects in the Model take care of downloading the file with the File
 
 Details: Interposing on the Gmail DOM
 =====================================
-This took a bit of reverse engineering and a bunch of trial and error to get right. Essentially, here are the steps that Gmail takes to attach a file:
+Read along if you would like to know how GPicker hijacks into Gmail's obfuscated Javascript logic. This took a bit of reverse engineering and a bunch of trial and error to get right. Essentially, here are the steps that Gmail takes to attach a file:
 
 1. Detect that the user clicked "Attach a file".
 2. Create hidden &lt;input type="file"> element, simulates a click by calling click() on it.
 3. File selection dialog appears. 
 4. When the user selects a file, the hidden element triggers a "change" event, to which Gmail is subscribed. Gmail then gets the element from the event's `currentTarget` field, and uploads each file from the `e.currentTarget.files` array as an attachment.
 
-Here are a few things that failed, and how I solved them/got around them:
+I needed to somehow take over at some point in this sequence, and trick Gmail into attaching a file that came from somewhere else than the local machine. Here are a few problems I encountered, and how I solved them/got around them:
 
-1. Creating an array of File objects to pass to Gmail. Turns out that File objects can only be created by a &lt;input type="file"> element -- there is no available constructor that extensions can use. However, it also turns out that File objects and Blob objects are interchangeable, so GPicker creates Blobs instead.
+1. Cannot construct File objects
+--------------------------------
+I needed to create an array of File objects to pass to Gmail. Turns out that File objects can only be created by a &lt;input type="file"> element -- there is no available public constructor. However, it also turns out that File objects and Blob objects are interchangeable, so GPicker creates Blobs instead.
 
-2. The first way I thought of cheating Gmail into attaching files of my choosing was to mess with the "change" event that the input element dispatches. Since Gmail uses the event's `e.currentTarget.files`, I just had to somehow set `e.currentTarget` to an element of my choice, which had its `files` field set with my files (see below why I couldn't just set the "files" field directly).  <br>
-At first this seemed hard: the currentTarget property gets set when dispatching the event, by the dispatchEvent function. Setting it before that would not make a difference, and after the dispatch the property becomes read-only. <br>
-I came up with the following: add a custom element as a child to the `&lt;input>` element, and make the child dispatch a "change" event, letting it eventually buble up and trigger Gmail's event handler. The currentTarget field would then point to the child.  <br>
-Unfortunately, this was a dead end -- even though the logic was correct (verified by checking the event's currentTarget after it was dispatched), somehow Gmail still had the correct currentTarget. My guess is that Gmail's event handler function is a closure that stores, in a bound variable, the element to which the listener was attached, and ignores the event's real currentTarget property. 
+2. Cannot set event's currentTarget property
+--------------------------------------------
+The first way I thought of cheating Gmail into attaching files of my choosing was to mess with the "change" event that the input element dispatches. Since Gmail uses the event's `e.currentTarget.files`, I just had to somehow set `e.currentTarget` to an element of my choice, which had its `files` field set with my files (see below why I couldn't just set the "files" field directly).  <br><br>
+At first this seemed hard: the currentTarget property gets set when dispatching the event, by the dispatchEvent function. Setting it before that would not make a difference, and after the dispatch the property becomes read-only. <br><br>
+I came up with the following: add a custom element as a child to the `<input>` element, and make the child dispatch a "change" event, letting it eventually bubble up and trigger Gmail's event handler. The `currentTarget` field would then point to the child, which I control.  <br><br>
+Unfortunately, this was a dead end -- even though the logic was correct (verified by checking the event's currentTarget after it was dispatched), somehow Gmail still had the correct currentTarget. My guess is that Gmail's event handler function is a closure that stores, in a bound variable, the element to which the listener was attached, and ignores the event's real `currentTarget` property. 
 
-3. The second way I came up with was to detect the creation of the hidden &lt;input> element, override its click() method, bring up filepicker and set its `files` field to an array of Blob objects. This did not work, because the `files` field of an &lt;input> element is read-only, for security reasons. <br>
-To solve this, I had to figure out a way to intercept the creation of the `input` element by Gmail, and return a fake element of another type instead, which would not have the read-only restriction on its `files` field (I chose to replace file input elements with `div` elements). I do this by interposing on the document's `createElement` method. <br>
-Gmail, however, does not create this specific file input element directly. Instead, it creates a temporary `div`, sets the `div`'s innerHTML to the HTML of the input element, and then calls `removeChild()` on the `div`. Therefore, I instrument all `div` elements at their creation time to have a special `removeChild()` method. Whenever a `div` removes a child of type `input type="file"`, I replace the result with a custom `div` with my own click handler. When Gmail simulates a click on the `div`, I bring up a Filepicker dialog. Later, when I have the blobs ready, I attach them to the fake input div and make the `div` dispatch a "change" event.  <br>
+3. Cannot set a `<input type="file">` element's "file" property
+------------------------------------------------------------------
+The second way I came up with was to detect the creation of the hidden &lt;input> element, override its click() method, bring up filepicker and set its `files` field to an array of Blob objects. This did not work, because the `files` field of an &lt;input> element is read-only, for security reasons. <br><br>
+To solve this, I had to figure out a way to intercept the creation of the `input` element by Gmail, and return a fake element of another type instead, which would not have the read-only restriction on its `files` field (I chose to replace file input elements with `div` elements). I do this by interposing on the document's `createElement` method. <br><br>
+Gmail, however, does not create this specific file input element directly. Instead, it creates a temporary `div`, sets the `div`'s innerHTML to the HTML of the input element, and then calls `removeChild()` on the `div`. Therefore, I instrument all `div` elements at their creation time to have a special `removeChild()` method. Whenever a `div` removes a child of type `input type="file"`, I replace the result with a custom `div` with my own click handler. When Gmail simulates a click on the `div`, I bring up a Filepicker dialog. Later, when I have the blobs ready, I attach them to the fake input div and make the `div` dispatch a "change" event.  <br><br>
 Note that dispatching the "change" event now works fine, because Gmail registered its "onchange" handler directly with our fake `div`. 
 
 TODOs
