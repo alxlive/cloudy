@@ -144,15 +144,16 @@ View.prototype._initInputElement = function(elem) {
     this.expectClick = false;
 
     var gpicker_view = this;
-    elem.onclick = function () {
+    $(elem).click(function (e) {
         if (gpicker_view.enabled && Gmailr.filepickerLoaded){
+            e.preventDefault();
             filepicker.pick(function(FPFile) {
                 gpicker_view.callbacks.fire("attach", FPFile);
             });
         } else {
             gpicker_view._simulateLocalAttachment();
         }
-    };
+    });
     this.gmail_inputelem = elem;
 }
 
