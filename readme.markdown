@@ -42,7 +42,7 @@ GPicker doesn't really use any custom css. I kept `main.css` as part of Gmailr.
 
 chrome/images
 -------------
-The images used in the project, as well as some other that could be used.
+The images used in the project, as well as some others that could be used.
 
 chrome/templates
 ----------------
