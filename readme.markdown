@@ -1,16 +1,16 @@
-GPicker: Attach files to Gmail from the cloud
+Cloudy: Attach files to Gmail from the cloud
 ==============================
 
-GPicker is a Google Chrome browser extension that overrides the default behavior for attaching files. Instead of a regular local file selection dialog, users are presented with a Filepicker.io window that lets them select files from many locations in the cloud: Dropbox, Gmail, Facebook, Flickr, Github, just to name a few. 
+Cloudy is a Google Chrome browser extension that overrides the default behavior for attaching files. Instead of a regular local file selection dialog, users are presented with a Filepicker.io window that lets them select files from many locations in the cloud: Dropbox, Gmail, Facebook, Flickr, Github, just to name a few. 
 
-GPicker uses [Filepicker.io](https://www.filepicker.io) and is built on top of [Gmailr](https://github.com/jamesyu/gmailr), a third-party Gmail API written in Javascript. 
+Cloudy uses [Filepicker.io](https://www.filepicker.io) and is built on top of [Gmailr](https://github.com/jamesyu/gmailr), a third-party Gmail API written in Javascript. 
 
-The GPicker icon was designed by [www.icons-land.com](http://www.icons-land.com).
+The Cloudy icon was designed by [www.icons-land.com](http://www.icons-land.com).
 
 Getting Started
 ===============
 
-To install GPicker, find it in the [Chrome Web Store](https://chrome.google.com/webstore/detail/gpicker/fcfnjfpcmnoabmbhponbioedjceaddaa). 
+To install Cloudy, find it in the [Chrome Web Store](https://chrome.google.com/webstore/detail/cloudy/fcfnjfpcmnoabmbhponbioedjceaddaa). 
 
 If instead you would like to play around with the code and install your local version, clone the repo and: 
 
@@ -38,7 +38,7 @@ The code is organized as follows:
 
 chrome/css
 ----------
-GPicker doesn't really use any custom css. I kept `main.css` as part of Gmailr.
+Cloudy doesn't really use any custom css. I kept `main.css` as part of Gmailr.
 
 chrome/images
 -------------
@@ -50,14 +50,14 @@ HTML templates to be injected into the Gmail DOM. Unfortunately, browser extensi
 
 chrome/js
 ---------
-The bulk of GPicker. Most of the logic is in `view.js`, `model.js` and `controller.js`. The View is responsible for interposing into the Gmail DOM and capturing file attachment events. The Controller observes the View and creates new FileHandler objects in the Model when an attachment event occurs. 
+The bulk of Cloudy. Most of the logic is in `view.js`, `model.js` and `controller.js`. The View is responsible for interposing into the Gmail DOM and capturing file attachment events. The Controller observes the View and creates new FileHandler objects in the Model when an attachment event occurs. 
 
 FileHandler objects in the Model take care of downloading the file with the Filepicker.io API. Once the file is downloaded, it needs to be decoded from base64. For big files, doing this in the main thread would make the UI freeze, so the model has a background worker to which file data is passed for conversion. Once the worker returns a file's decoded data, the corresponding FileHandler creates a Blob instance and notifies the Controller. The Controller passes the file to the View, which attaches is to the relevant &lt;input> element and dispatches an event letting Gmail know it has an attachment to upload.
 
 
 Details: Interposing on the Gmail DOM
 =====================================
-Read along if you would like to know how GPicker hijacks into Gmail's obfuscated Javascript logic. This took a bit of reverse engineering and a bunch of trial and error to get right. Essentially, here are the steps that Gmail takes to attach a file:
+Read along if you would like to know how Cloudy hijacks into Gmail's obfuscated Javascript logic. This took a bit of reverse engineering and a bunch of trial and error to get right. Essentially, here are the steps that Gmail takes to attach a file:
 
 1. Detect that the user clicked "Attach a file".
 2. Create hidden &lt;input type="file"> element, simulates a click by calling click() on it.
@@ -68,7 +68,7 @@ I needed to somehow take over at some point in this sequence, and trick Gmail in
 
 1. Cannot construct File objects
 --------------------------------
-I needed to create an array of File objects to pass to Gmail. Turns out that File objects can only be created by a &lt;input type="file"> element -- there is no available public constructor. However, it also turns out that File objects and Blob objects are interchangeable, so GPicker creates Blobs instead.
+I needed to create an array of File objects to pass to Gmail. Turns out that File objects can only be created by a &lt;input type="file"> element -- there is no available public constructor. However, it also turns out that File objects and Blob objects are interchangeable, so Cloudy creates Blobs instead.
 
 2. Cannot set event's currentTarget property
 --------------------------------------------
@@ -87,4 +87,4 @@ Note that dispatching the "change" event now works fine, because Gmail registere
 TODOs
 =====
 
-When the user pops out the compose window, Gmailr never finishes loading, and thus GPicker never comes into play. A quick fix should be sent to Gmailr but I don't have time to do it right now. 
+When the user pops out the compose window, Gmailr never finishes loading, and thus Cloudy never comes into play. A quick fix should be sent to Gmailr but I don't have time to do it right now. 

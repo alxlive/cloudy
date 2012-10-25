@@ -44,7 +44,7 @@ if(top.document == document) {
                     p.dataset.html = xhr.responseText;
                     p.id = id;
                     p.style.display = "none";
-                    p.className += " gpicker_invisible";
+                    p.className += " cloudy_invisible";
                     document.body.insertBefore(p, document.body.children[0]);
                 }
         }

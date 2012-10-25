@@ -14,14 +14,14 @@ var View = function () {
 View.prototype.checkCompose = function() {
     if ($("textarea").filter("[name=to]").length) {
         if ($("#filepicker_attach")[0] === undefined) {
-            var gpicker_view = this;
+            var cloudy_view = this;
             var attachLinks = $("div[role=main]").find("span")
         	    .filter("[role=link]")
                 .filter(":contains('Attach a file')");
             for (var i = 0; i < attachLinks.length; i++) {
                 $(attachLinks[i]).parents('div').click(function(e){
                     // e.stopPropagation();
-                    gpicker_view.expectClick = true;
+                    cloudy_view.expectClick = true;
                 });
             }
             this.tablerow = $(attachLinks[0]).parents('tr')[0];
@@ -56,7 +56,7 @@ View.prototype.attachFiles = function (filesArray) {
     // This should never happen. If we don't have a handle to the input element
     // added by Gmail, we cannot signal to Gmail that files were added.
     if (!this.gmail_inputelem) {
-        alert("General error in GPicker extension. Disabling and reverting to regular attachment mechanism.");
+        alert("General error in Cloudy extension. Disabling and reverting to regular attachment mechanism.");
         this.enabled = false;
         return;
     } 
@@ -81,10 +81,10 @@ View.prototype.attachFiles = function (filesArray) {
  * .files array.
  */
 View.prototype._simulateLocalAttachment = function() {
-    var tmpinputelem = $('<input type="file" class="gpicker_invisible">').appendTo("#tmpparent");
-    var gpicker_view = this;
+    var tmpinputelem = $('<input type="file" class="cloudy_invisible">').appendTo("#tmpparent");
+    var cloudy_view = this;
     tmpinputelem.change(function() {
-        gpicker_view.attachFiles(this.files);
+        cloudy_view.attachFiles(this.files);
         $(this).remove();
     });
     tmpinputelem.click();
@@ -143,15 +143,15 @@ View.prototype._initInputElement = function(elem) {
     }
     this.expectClick = false;
 
-    var gpicker_view = this;
+    var cloudy_view = this;
     $(elem).click(function (e) {
-        if (gpicker_view.enabled && Gmailr.filepickerLoaded){
+        if (cloudy_view.enabled && Gmailr.filepickerLoaded){
             e.preventDefault();
             filepicker.pick(function(FPFile) {
-                gpicker_view.callbacks.fire("attach", FPFile);
+                cloudy_view.callbacks.fire("attach", FPFile);
             });
         } else {
-            gpicker_view._simulateLocalAttachment();
+            cloudy_view._simulateLocalAttachment();
         }
     });
     this.gmail_inputelem = elem;
@@ -165,7 +165,7 @@ View.prototype._initInputElement = function(elem) {
  * on input elements for security reasons. 
  */
 View.prototype._initContainerDiv = function(container) {
-    var gpicker_view = this;
+    var cloudy_view = this;
     container.orig_removeChild = container.removeChild;
     container.removeChild = function(child) {
         child = this.orig_removeChild(child);
@@ -179,7 +179,7 @@ View.prototype._initContainerDiv = function(container) {
             parentdiv.innerHTML = childhtml;
 
             child = parentdiv.orig_removeChild(parentdiv.firstChild);
-            gpicker_view._initInputElement(child);
+            cloudy_view._initInputElement(child);
         }
         return child;
     }
@@ -193,7 +193,7 @@ View.prototype._initContainerDiv = function(container) {
  * on that div to return the new <input> element. 
  */
 View.prototype._interposeCreateElem = function() {
-    var gpicker_view = this;
+    var cloudy_view = this;
     top.document.gmail_createElement = top.document.createElement;
     top.document.createElement = function(htmlstr) {
         var orig_htmlstr = htmlstr;
@@ -207,11 +207,11 @@ View.prototype._interposeCreateElem = function() {
             htmlstr.replace("input", "div");
         }*/
         var result = top.document.gmail_createElement(htmlstr);
-        if (gpicker_view.expectClick) {
+        if (cloudy_view.expectClick) {
             if (orig_htmlstr.indexOf("div") !== -1) {
-                gpicker_view._initContainerDiv(result);
+                cloudy_view._initContainerDiv(result);
             } /*else if (orig_htmlstr.indexOf("input") !== -1) {
-                gpicker_view._initInputElement(result); 
+                cloudy_view._initInputElement(result); 
             }*/
         }
         return result;

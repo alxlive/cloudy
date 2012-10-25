@@ -1,6 +1,6 @@
 {
-  "name": "GPicker",
-  "version": "0.1.4",
+  "name": "Cloudy",
+  "version": "0.1.5",
   "description": "Attach to Gmail from the cloud!",
   "icons": { "16": "icon16.png",
              "48": "icon48.png",
