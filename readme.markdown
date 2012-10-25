@@ -19,7 +19,7 @@ If instead you would like to play around with the code and install your local ve
 3. Click "Load unpacked extension..."
 4. Choose the `chrome` directory in this repo.
 5. Enable the newly added extension.
-6. Head over to your Gmail account, click "Compose" and you should see a small cloud icon next to the "Attach a file" link. Click it and you'll be presented with a Filepicker.io window to select files from the cloud. 
+6. Head over to your Gmail account, click "Compose" and you should see a small cloud icon next to the "Attach a file" link. Click the link and you'll be presented with a Filepicker.io window to select files from the cloud. 
 
 
 Extension Architecture
