@@ -31,31 +31,13 @@ if(top.document == document) {
         }
         headID.appendChild(newScript);
     };
-
-    var addDomElem = function(path, id) {
-        var xhr = new XMLHttpRequest();
-        xhr.onreadystatechange=function()
-        {
-                if (xhr.readyState==4 && xhr.status==200)
-                {
-                    var p = document.createElement("div");
-                    /*p.innerHTML = xhr.responseText;
-                    var elem = p.removeChild(p.firstChild);*/
-                    p.dataset.html = xhr.responseText;
-                    p.id = id;
-                    p.style.display = "none";
-                    p.className += " cloudy_invisible";
-                    document.body.insertBefore(p, document.body.children[0]);
-                }
-        }
-        xhr.open("GET", path, true);
-        xhr.send();
-    }
     
     // Pass data to inserted scripts via DOM elements
     addData("css_path",        chrome.extension.getURL("css/main.css"));
-    addData("jquery_path",     "//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js");
-    addData("jquery_bbq_path", chrome.extension.getURL("js/lib/jquery.ba-bbq.js"));
+    addData("jquery_path",     
+    	"//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js");
+    addData("jquery_bbq_path", 
+    	chrome.extension.getURL("js/lib/jquery.ba-bbq.js"));
     addData("gmailr_path",     chrome.extension.getURL("js/lib/gmailr.js"));
     addData("main_path",       chrome.extension.getURL("js/main.js"));
     addData("model_path",      chrome.extension.getURL("js/model.js"));
@@ -63,17 +45,17 @@ if(top.document == document) {
     addData("utils_path",      chrome.extension.getURL("js/utils.js"));
     addData("constants_path",  chrome.extension.getURL("js/constants.js"));
     addData("controller_path", chrome.extension.getURL("js/controller.js"));
-    addData("cloudicon_path",  chrome.extension.getURL("images/cloudIcon.png"));
+    addData("cloudiconon_path",  
+    	chrome.extension.getURL("images/cloudIconOn.png"));
+    addData("cloudiconoff_path", 
+    	chrome.extension.getURL("images/cloudIconOff.png"));
     addData("erroricon_path",  chrome.extension.getURL("images/error.png"));
-    addData("downloadloading_path",chrome.extension.getURL("images/loading-ring.gif"));
-    addData("downloadcomplete_path", chrome.extension.getURL("images/checkmark.png"));
-    addData("resourcesjs_path",      chrome.extension.getURL("js/resources.js"));
-    //addDomElem(chrome.extension.getURL("templates/downloaddiv.html"),
-    //           "filepicker_customprogress_template");
-    //addDomElem(chrome.extension.getURL("templates/customrow.html"),
-    //           "filepicker_customrow_template");
-    //addDomElem(chrome.extension.getURL("js/decode-worker.js"),
-    //           "filepicker_worker_script");
+    addData("downloadloading_path",
+    	chrome.extension.getURL("images/loading-ring.gif"));
+    addData("downloadcomplete_path", 
+    	chrome.extension.getURL("images/checkmark.png"));
+    addData("resourcesjs_path",      
+    	chrome.extension.getURL("js/resources.js"));
      
     // Load the initialization scripts
     loadScript(chrome.extension.getURL("js/lib/lab.js"), function() {

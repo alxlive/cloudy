@@ -13,7 +13,7 @@ var View = function () {
  */
 View.prototype.checkCompose = function() {
     if ($("textarea").filter("[name=to]").length) {
-        if ($("#filepicker_attach")[0] === undefined) {
+        if ($("span.cloudy_icon_container")[0] === undefined) {
             var cloudy_view = this;
             var attachLinks = $("div[role=main]").find("span")
         	    .filter("[role=link]")
@@ -31,18 +31,50 @@ View.prototype.checkCompose = function() {
             var customrow = $(this.customrowhtml).insertBefore(this.tablerow);
             customrow.children().eq(0).addClass(
                 this.tablerow.firstChild.className);
-            $(this.tablerow).children().eq(0).html(
-              '<span id="filepicker_attach"><img src="' + 
-              this.cloudimgurl + '"></span>' + this.tablerowPrevHTML);
-            $(this.tablerow).prev().children().eq(0).addClass(
-                this.tablerow.firstChild.className);
+            this._updateCloudyIcon(this.tablerow, true);
         }
-        if (this.tablerow.style.display === "none") {
-            $(this.hiddenrow).children().eq(0).html(
-                '<span id="filepicker_attach"><img src="' + 
-                this.cloudimgurl + '"></span>' + this.tablerowPrevHTML);
+        if (this.tablerow.style.display === "none" && 
+                !$(this.hiddenrow).find("img.cloudy_icon").length) {
+            this._updateCloudyIcon(this.hiddenrow, true);
         }
     }
+}
+
+/* Toggle enabled/disabled state of the view (i.e. of the application)
+ * Update GUI to reflect this change.
+ */ 
+View.prototype._toggleEnabled = function() {
+    this.enabled = !this.enabled;
+    this._updateCloudyIcon(this.hiddenrow, false);
+    this._updateCloudyIcon(this.tablerow, false);
+}
+
+/* Given a row, adds the Cloudy icon to the first element of that row.
+ */
+View.prototype._updateCloudyIcon = function(row, create) {
+    var cloudy_view = this; 
+    var currentIconUrl = this.enabled? this.cloudimgurl: this.cloudimgoffurl;
+    var firstchild = $(row).children().eq(0);
+    var img = firstchild.find("img.cloudy_icon");
+
+    if (!img.length) {
+        if (create) {
+            firstchild.html('<span ' + 
+                'class="cloudy_icon_container"><img class="cloudy_icon" ' +
+                'width="33" height="20" src="' + currentIconUrl + '" />' + 
+                '</span>');
+            img = firstchild.find("img.cloudy_icon");
+        }
+    } else {
+        img.attr("src", currentIconUrl);
+    }
+    
+    if (create && img.length) {
+        firstchild.find("img.cloudy_icon").click(
+            function(){
+                cloudy_view._toggleEnabled();
+            });
+     }
 }
 
 /* Registers a callback function. Used by objects to subscribe to 
@@ -56,7 +88,8 @@ View.prototype.attachFiles = function (filesArray) {
     // This should never happen. If we don't have a handle to the input element
     // added by Gmail, we cannot signal to Gmail that files were added.
     if (!this.gmail_inputelem) {
-        alert("General error in Cloudy extension. Disabling and reverting to regular attachment mechanism.");
+        alert("General error in Cloudy extension. Disabling and reverting " +
+            "to regular attachment mechanism.");
         this.enabled = false;
         return;
     } 
@@ -81,7 +114,8 @@ View.prototype.attachFiles = function (filesArray) {
  * .files array.
  */
 View.prototype._simulateLocalAttachment = function() {
-    var tmpinputelem = $('<input type="file" class="cloudy_invisible">').appendTo("#tmpparent");
+    var tmpinputelem = $('<input type="file" class="cloudy_invisible">')
+        .appendTo("#tmpparent");
     var cloudy_view = this;
     tmpinputelem.change(function() {
         cloudy_view.attachFiles(this.files);
@@ -96,11 +130,13 @@ View.prototype.addDownloadView = function(dwnldViewId, filename, size) {
     var progdiv = $(this.downloaddivhtml).appendTo("#filepicker_downloads");
     progdiv.attr("id", dwnldViewId);
     $("#filepicker_customrow").css("display", "table-row");
-    progdiv.find("span").filter("#filename").html(filename + "  " + Math.ceil(size/1024) + "K");
-    progdiv.find("#download_status_img").attr("src", getData("downloadloading_path"));
+    progdiv.find("span").filter("#filename").html(filename + "  " + 
+        Math.ceil(size/1024) + "K");
+    progdiv.find("#download_status_img").attr("src", 
+        getData("downloadloading_path"));
 }
 
-View.prototype._setDownloadViewStatus = function(dwnldViewId, text, imgurl, clear) {
+View.prototype._setDownloadViewStatus = function(dwnldViewId, text, imgurl,                                                      clear) {
     var progdiv = $(document.getElementById(dwnldViewId));
     progdiv.find("#downloading_msg").text(text);
     if (imgurl)
@@ -115,7 +151,8 @@ View.prototype._setDownloadViewStatus = function(dwnldViewId, text, imgurl, clea
  */
 View.prototype.updateDownloadView = function(dwnldViewId, state) {
     if (state === "done") {
-        this._setDownloadViewStatus(dwnldViewId, "Done.", this.dwnldcompleteimgurl, true);
+        this._setDownloadViewStatus(dwnldViewId, "Done.", 
+            this.dwnldcompleteimgurl, true);
     } else if (state === "progress") {
         // in the current implementation, this will never happen
         /* var statusdiv = $(document.getElementById(fileHandlers[concatFilename(FPFile.filename)].divId));
@@ -226,7 +263,8 @@ View.prototype._init = function() {
     this.downloaddivhtml = templates.downloadDiv;// $("#filepicker_customprogress_template")[0].dataset.html;
 
     // get URL to cloud icon -- to add next to "attach a file" link
-    this.cloudimgurl = getData("cloudicon_path");
+    this.cloudimgurl = getData("cloudiconon_path");
+    this.cloudimgoffurl = getData("cloudiconoff_path");
     this.errorimgurl = getData("erroricon_path");
     this.dwnldcompleteimgurl = getData("downloadcomplete_path");
 
@@ -235,7 +273,8 @@ View.prototype._init = function() {
     $("#filepicker_customprogress_template").remove();
      
     // add tmpparent div, used to add elements temporarily to the DOM
-    $("<div id='tmpparent' style='display: none;'></div>").prependTo($(document.body));
+    var tmpParentHtml = $("<div id='tmpparent' style='display: none;'></div>");
+    tmpParentHtml.prependTo($(document.body));
 
     // initialize callbacks object, so the Controller can bind callbacks to the View.
     this.callbacks = $.Callbacks();
@@ -247,8 +286,8 @@ View.prototype._init = function() {
     // attaching a file
     this._interposeCreateElem();
 
-    // set View as enabled. Marking this as false effectively disables the entire
-    // extension, as it will no longer receive any inputs.
+    // set View as enabled. Marking this as false effectively disables the 
+    // entire extension, as it will no longer receive any inputs.
     this.enabled = true;
 }
 

@@ -1,6 +1,6 @@
 {
   "name": "Cloudy",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "Attach to Gmail from the cloud!",
   "icons": { "16": "icon16.png",
              "48": "icon48.png",
@@ -38,8 +38,9 @@
     "js/lib/lab.js", 
     "images/loading-ring.gif", 
     "images/checkmark.png", 
-    "images/cloudIcon.png", 
     "images/error.png",
+    "images/cloudIconOn.png",
+    "images/cloudIconOff.png",
     "templates/downloaddiv.html", 
     "templates/customrow.html", 
     "js/main.css"
