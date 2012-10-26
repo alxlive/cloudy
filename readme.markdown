@@ -68,7 +68,7 @@ I needed to somehow take over at some point in this sequence, and trick Gmail in
 
 1. Cannot construct File objects
 --------------------------------
-I needed to create an array of File objects to pass to Gmail. Turns out that File objects can only be created by a &lt;input type="file"> element -- there is no available public constructor. However, it also turns out that File objects and Blob objects are interchangeable, so Cloudy creates Blobs instead.
+I needed to create an array of File objects to pass to Gmail. Turns out that File objects can only be created by a &lt;input type="file"> element -- there is no available public constructor to use in your javascript. However, it also turns out that File objects and Blob objects are interchangeable, so Cloudy creates Blobs instead.
 
 2. Cannot set event's currentTarget property
 --------------------------------------------
