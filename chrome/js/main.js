@@ -8,6 +8,7 @@
 Gmailr.debug = true; // Turn verbose debugging messages on 
 
 Gmailr.init(function(G) {
+    G.insertCss(getData('css_path'));
     var head= document.getElementsByTagName('head')[0];
     var script= document.createElement('script');
     script.type= 'text/javascript';
