@@ -262,43 +262,6 @@
                         return out;
                     }
 
-                    win.XMLHttpRequest.prototype._Gmail_setRequestHeader = win.XMLHttpRequest.prototype.setRequestHeader;
-                    win.XMLHttpRequest.prototype.setRequestHeader = function (body) {
-                        var out = this._Gmail_setRequestHeader.apply(this, arguments);
-                        if (this.xhrParams) {
-                            this.xhrParams.body = body;
-                            Gmailr.detectXHREvents(this.xhrParams);
-                        }
-                        return out;
-                    }
-
-
-		    top.document.body.orig_appendChild = top.document.body.appendChild;
-		    top.document.body.appendChild = function (elem){
-		    	if (elem.tagName.toLowerCase() === "input") {
-				if (elem.getAttribute("type").toLowerCase() === "file") {
-					/*var origElem = elem;
-					elem = top.document.createElement("div");
-					elem.origElem = origElem;*/
-					//newElem = top.document.createElement("div");
-					//elem.newElem = newElem;
-                                        
-                                        // would be a nice 3-line solution, but couldn't get it to work
-                                        // Actually this couldn't work: I don't think filepicker would read the file and 
-                                        // fill out the .files field.
-                                        /*if (Gmailr.filepickerLoaded) {
-                                                elem.type = "filepicker";
-                                                filepicker.constructWidget(document.getElementById(elem.id));
-                                        }*/
-                                }
-                        }
-			return this.orig_appendChild(elem);
-			//if (elem.newElem !== undefined) {
-			//	elem.appendChild(elem.newElem);
-			//}
-		    }
-
-
                     if (!top._Gmail_iframeFn) {
                         top._Gmail_iframeFn = top.GG_iframeFn;
                         this.iframeData = {};
@@ -498,9 +461,6 @@
                             p("User spammed " + count + " emails.");
                             this.executeObQueues('spam', count);
                             break;
-			default:
-			    console.log("action is " + action);
-			    break;
                     }
                 }
             } catch(e) {

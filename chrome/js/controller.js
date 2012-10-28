@@ -21,8 +21,8 @@ Controller.prototype._init = function() {
     this.view = new View();
     var that = this;
     this.view.addObserver(function() {
-                              that._processViewEvent.apply(that, arguments)
-                          });
+        that._processViewEvent.apply(that, arguments)
+    });
 }
 
 /* File Handler in the model calls this function back to signify a change in 
@@ -46,8 +46,8 @@ Controller.prototype._processViewEvent = function(msg, FPFile) {
     var that = this;
     if (msg === "attach") {
         this.model.addDownloadHandler(FPFile, 
-                        function() {
-                            that._processDownloadEvent.apply(that, arguments);
-                        });
+            function() {
+                that._processDownloadEvent.apply(that, arguments);
+            });
     }
 }

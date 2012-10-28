@@ -86,7 +86,8 @@ FileHandler.prototype.completeDownload = function(data) {
 
     this.cb({cmd: "updateView", dwnldViewId: this.id, state: "processing"});
 
-    this.model.worker.postMessage({cmd: "decode", datastr: data, handlerId: this.id}, [])
+    this.model.worker.postMessage({cmd: "decode", datastr: data, 
+                                   handlerId: this.id}, [])
 }
 
 /* Start downloading file
@@ -107,6 +108,8 @@ FileHandler.prototype.downloadFile = function() {
     var fhandler = this;
     // read data with filepicker.read()
     // TODO: don't read all files as binary, check mimeType
+    //       This would speed up execution as decoding would not be 
+    //       necessary.
     filepicker.read(FPFile, {base64encode: true, cache: false, asText: false}, 
         function() {
             fhandler.completeDownload.apply(fhandler, arguments);
@@ -114,7 +117,8 @@ FileHandler.prototype.downloadFile = function() {
         function(fperror) {
             fhandler.cb({cmd: "error", state: "error", dwnldViewId: this.id});
         }, function(percent) {
-            // for some reason this function never gets called. Ask FilePicker.io?
+            // for some reason this function never gets called. 
+            // Submitted feedback to Filepicker.io.
             console.log("Progress update: " + percent + "% complete");
         });
 };
