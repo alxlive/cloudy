@@ -12,37 +12,71 @@
  *  the fileHandlers associative array.
  */
 var Model = function (workerblob) {
-    this.fileHandlers = {};
-    this.workerblob = workerblob;
+    if (arguments.callee.singleton_instance) {
+        console.log("returning Model instance");
+        return arguments.callee.singleton_instance;
+    }
+    console.log("creating new model instance");
 
-    this.worker = new Worker(window.webkitURL.createObjectURL(workerblob));
+    arguments.callee.singleton_instance = new (function (workerblob) {
+        var fileHandlers = {};
+        var worker;
+        var model;
 
-    // Use webkitPostMessage if available, to send ArrayBuffers 
-    // to the worker by reference as transferrable objects instead 
-    // of copying them over to the worker's environment.
-    this.worker.postMessage = this.worker.webkitPostMessage || 
-                               this.worker.postMessage;
+        /* Create a file handler to download the file from the 
+         * cloud. 
+         */
+        this.addFileHandler = function(FPFile, cb) {
+            var fhandler = new FileHandler(FPFile, cb);
+            fileHandlers[fhandler.id] = fhandler;
+            fhandler.downloadFile();
+        }
 
-    that = this;
-    this.worker.addEventListener('message', function(e) {
-        var fhandler = that.fileHandlers[e.data.handlerId];
-        fhandler.fileProcessed(e.data);
-    }, false);
+        /* Delete the download handler with the given id.
+         */
+        this.deleteFileHandler = function(id) {
+            delete fileHandlers[id];
+        }
+
+        /* Used by FileHandler objects to send files to the worker for decoding.
+         */
+        this.getWorker = function() {
+            return worker;
+        }
+
+        var init = function (){
+            worker = new Worker(window.webkitURL.createObjectURL(workerblob));
+
+            // Use webkitPostMessage if available, to send ArrayBuffers 
+            // to the worker by reference as transferrable objects instead 
+            // of copying them over to the worker's environment.
+            worker.postMessage = worker.webkitPostMessage || 
+                                  worker.postMessage;
+
+            model = this;
+            worker.addEventListener('message', function(e) {
+                var fhandler = fileHandlers[e.data.handlerId];
+                fhandler.fileProcessed(e.data);
+            }, false);
+        }
+
+        init.call(this);
+        return this;
+    })(workerblob);
+
+    return arguments.callee.singleton_instance;
 }
 
-/* Create a download handler to download the file from the 
- * cloud. 
- */
-Model.prototype.addDownloadHandler = function(FPFile, cb) {
-    var fhandler = new FileHandler(this, FPFile, cb);
-    this.fileHandlers[fhandler.id] = fhandler;
-    fhandler.downloadFile();
+Model.getInstance = function(){
+    var model = new Model();
+    return model;
 }
 
-/* HELPER OBJECTS */
 
-var FileHandler = function(model, FPFile, cb) {
-    this.model = model;
+
+/* HELPER OBJECT: FileHandler */
+
+var FileHandler = function(FPFile, cb) {
     this.fpfile = FPFile;
     // use filename + current time as ID, to allow a user to attach same
     // file twice (don't know why a user would want that, but let's not
@@ -65,7 +99,7 @@ FileHandler.prototype.fileProcessed = function(data) {
           
     this.cb({cmd: "done", state: "done", dwnldViewId: this.id}, files);
 
-    delete this.model.fileHandlers[this.id];
+    Model.getInstance().deleteFileHandler(this.id);
 }
 
 /* Called on completion of a download from FilePicker. 
@@ -86,8 +120,8 @@ FileHandler.prototype.completeDownload = function(data) {
 
     this.cb({cmd: "updateView", dwnldViewId: this.id, state: "processing"});
 
-    this.model.worker.postMessage({cmd: "decode", datastr: data, 
-                                   handlerId: this.id}, [])
+    Model.getInstance().getWorker().postMessage({cmd: "decode", datastr: data, 
+                                                 handlerId: this.id}, [])
 }
 
 /* Start downloading file
@@ -101,7 +135,7 @@ FileHandler.prototype.downloadFile = function() {
              filename: FPFile.filename, size: FPFile.size});
     if (FPFile.size > MAX_ATTACHMENT_SIZE) {
         this.cb({cmd: "error", dwnldViewId: this.id, state: "maxSizeExceeded"});
-    	delete this.model.fileHandlers[this.id];
+        Model.getInstance().deleteFileHandler(this.id);
 	return;
     }
 

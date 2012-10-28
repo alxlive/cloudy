@@ -7,7 +7,6 @@ var View = function () {
     if (arguments.callee.singleton_instance) {
         return arguments.callee.singleton_instance;
     }
-    console.log("Creating new View object");
 
     arguments.callee.singleton_instance = new (function () {
 /* PROPERTIES */
@@ -39,11 +38,9 @@ var View = function () {
         var dwnldcompleteimgurl;
         var errorimgurl;
 
-        // Rows (<tr>) in Gmail's Compose view. We inject the Cloudy icon 
-        // depending on which row exists and is visible.
-        var view_upperrow;
-        var view_middlerow;
-        var view_lowerrow;
+        // Candidate rows (<tr>) for injection in Gmail's Compose view. We 
+        // inject the Cloudy icon depending on which row exists and is visible.
+        var rows = [];
         var view_currentrow;
 
 /* PUBLIC METHODS */
@@ -120,79 +117,35 @@ var View = function () {
          */
         var checkCompose = function() {
             if ($("textarea").filter("[name=to]").length) {
-                if ($("span.cloudy_icon_container")[0] === undefined || 
-                        (view_currentrow && 
-                         !$(view_currentrow).is(":visible"))) {
-                    var alreadyInCompose = false;
-                    if (view_currentrow && !$(view_currentrow).is(":visible")) {
-                        console.log("already in Compose, but changed");
-                        alreadyInCompose = true;
-                        view_upperrow = null;
-                        view_middlerow = null
-                        view_lowerrow = null;
-                    }
-                    var attachLinks = $("div[role=main]").find("span")
-                        .filter("[role=link]")
-                        .filter(":contains('Attach a file')");
-                    if (! attachLinks.length) {
-                        attachLinks = $("div[role=main]").find("span")
-                        .filter("[role=link]")
-                        .filter(":contains('Attach another file')");
-                    }
-                    if (attachLinks.length === 1) {
-                        view_lowerrow = $(attachLinks[0]).parents('tr')[0];
-                        view_upperrow = $(view_lowerrow).prev()[0];
-                    } else {
-                        view_upperrow = $(attachLinks[0]).parents('tr')[0];
-                        view_lowerrow = $(attachLinks[1]).parents('tr')[0];
-                    }
-                    if ($(view_upperrow).next()
-                            .find("input[name=subject]").length) {
-                        view_middlerow = $(view_upperrow).next()
-                            .find("input[name=subject]").next()[0];
-                        updateCloudyIcon(view_middlerow, true);
-                        $(view_middlerow).find("img.cloudy_icon").addClass(
-                            "cloudy_invisible");
-                    }
+                if ($("span.cloudy_icon_container")[0] === undefined) {
+                    var subjectrow = $($("div[role=main]").find("input")
+                        .filter("[name=subject]").parents("tr")[0]);
+                    rows[0] = subjectrow.prev();
+                    rows[1] = subjectrow.next();
+                    rows[2] = subjectrow.next().next();
+                    var customrow;
+                    customrow = $(customrowhtml).insertBefore(rows[2]);
+                    customrow.children().eq(0).addClass(
+                        rows[1].children().eq(0).attr("class"));
 
-                    if (!alreadyInCompose) {
-                        console.log("creating custom row");
-                        debugger;
-                        var customrow;
-                        if (view_middlerow) {
-                            customrow = $(customrowhtml).insertBefore(
-                                view_middlerow);
-                        } else {
-                            customrow = $(customrowhtml).insertBefore(
-                                view_upperrow);
-                        }
-                        customrow.children().eq(0).addClass(
-                            view_upperrow.firstChild.className);
+                    for (var i=0; i < rows.length; i++) {
+                        updateCloudyIcon(rows[i], true);
+                        if (i !== 0)
+                            rows[i].find("img.cloudy_icon").addClass(
+                                "cloudy_invisible");
                     }
-                    console.log("after custom row creation");
-                    updateCloudyIcon(view_upperrow, true);
-                    updateCloudyIcon(view_lowerrow, true);
-                    $(view_lowerrow).find("img.cloudy_icon").addClass(
-                        "cloudy_invisible");
-                    view_currentrow = view_upperrow;
+                    view_currentrow = rows[0];
                 }
-                if ($(view_lowerrow).is(":visible")) {
-                    if (view_currentrow !== view_lowerrow) {
-                        swapRows(view_lowerrow);
-                    } 
-                } else if (view_middlerow && $(view_middlerow).is(":visible")) {
-                    if (view_currentrow !== view_middlerow) {
-                        swapRows(view_middlerow);
-                    }
-                }  else if ($(view_upperrow).is(":visible")) {
-                    if (view_currentrow !== view_upperrow) {
-                        swapRows(view_upperrow);
+                for (var i=rows.length-1; i >=0; i--) {
+                    if (rows[i].is(":visible")) {
+                        if (view_currentrow !== rows[i]) {
+                            swapRows(rows[i]);
+                        } 
+                        break;
                     }
                 }
-            } else if (view_upperrow) {
-                view_upperrow = null;
-                view_middlerow = null;
-                view_lowerrow = null;
+            } else if (rows.length) {
+                rows = [];
                 view_currentrow = null;
             }
         }
@@ -204,7 +157,7 @@ var View = function () {
         var swapRows = function(row) {
             $(view_currentrow).find("img.cloudy_icon").addClass(
                 "cloudy_invisible");
-            $(row).find("img.cloudy_icon").removeClass("cloudy_invisible");
+            row.find("img.cloudy_icon").removeClass("cloudy_invisible");
             view_currentrow = row;
         }
 
@@ -213,10 +166,8 @@ var View = function () {
          */ 
         var toggleEnabled = function() {
             view_enabled = !view_enabled;
-            updateCloudyIcon(view_lowerrow, false);
-            updateCloudyIcon(view_upperrow, false);
-            if (view_middlerow) {
-                updateCloudyIcon(view_middlerow, false);
+            for (var i=0; i<rows.length; i++) {
+                updateCloudyIcon(rows[i], false);
             }
         }
 
@@ -225,7 +176,7 @@ var View = function () {
         var updateCloudyIcon = function(row, create) {
             var currentIconUrl = view_enabled? 
                 cloudimgurl: cloudimgoffurl;
-            var firstchild = $(row).children().eq(0);
+            var firstchild = row.children().eq(0);
             var img = firstchild.find("img.cloudy_icon");
 
             if (!img.length) {
@@ -242,10 +193,8 @@ var View = function () {
             }
             
             if (create && img.length) {
-                console.log("adding click toggle");
                 firstchild.find("img.cloudy_icon").click(
                     function(){
-                        console.log(row);
                         toggleEnabled();
                     });
              }
@@ -403,6 +352,5 @@ var View = function () {
         return this;
     })();
 
-    debugger;
     return arguments.callee.singleton_instance;
 }
