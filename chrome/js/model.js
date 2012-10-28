@@ -13,10 +13,8 @@
  */
 var Model = function (workerblob) {
     if (arguments.callee.singleton_instance) {
-        console.log("returning Model instance");
         return arguments.callee.singleton_instance;
     }
-    console.log("creating new model instance");
 
     arguments.callee.singleton_instance = new (function (workerblob) {
         var fileHandlers = {};

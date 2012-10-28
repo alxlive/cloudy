@@ -150,9 +150,9 @@ var View = function () {
             }
         }
 
-        /* There are two rows on which the Cloudy icon can appear. Swap the rows
-         * by making the first argument's icon invisible, and the second row's 
-         * icon visible.
+        /* Swap the row currently displaying the Cloudy icon for the given row.
+         * Make the current row's icon invisible, and the second row's icon
+         * visible.
          */
         var swapRows = function(row) {
             $(view_currentrow).find("img.cloudy_icon").addClass(
