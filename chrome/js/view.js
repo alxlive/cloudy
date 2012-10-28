@@ -23,41 +23,29 @@ View.prototype.checkCompose = function() {
                 .filter("[role=link]")
                 .filter(":contains('Attach another file')");
             }
-            console.log("1. attachLinks is ");
-            console.log(attachLinks);
             if (attachLinks.length === 1) {
                 this.lowerrow = $(attachLinks[0]).parents('tr')[0];
                 this.upperrow = $(this.lowerrow).prev()[0];
             } else {
                 this.upperrow = $(attachLinks[0]).parents('tr')[0];
                 this.lowerrow = $(attachLinks[1]).parents('tr')[0];
-                this.upperrow.initialized = false;
             }
-            console.log("2. attachLinks is ");
-            console.log(attachLinks);
-            console.log($($(attachLinks[0]).parents("div")[0]));
-            this.lowerrow.initialized = true;
-            for (var i = 0; i < attachLinks.length; i++) {
-                $($(attachLinks[0])/*.parents("div")[0]*/).click(function(e){
-                    // e.stopPropagation();
-                    console.log("GOT CLICK");
-                    cloudy_view.expectClick = true;
-                });
-                console.log("registered click handler");
-            }
-            /*for (var i = 0; i < attachLinks.length; i++) {
-                $(this.lowerrow).children().eq(1).click(function (e) {
-                    if ($(e.target).text().indexOf("Attach") !== -1) {
-                        // e.stopPropagation();
-                        cloudy_view.expectClick = true;
-                    }
-                });
-            }*/ 
             this.upperrowPrevHTML = $(this.upperrow).children().eq(0)
                 .html();
+            if ($(this.upperrow).next().find("input[name=subject]").length) {
+                this.middlerow = $($(this.upperrow).next()).next();
+                this._updateCloudyIcon(this.middlerow, true);
+                $(this.middlerow).find("img.cloudy_icon").addClass(
+                    "cloudy_invisible");
+            }
 
-            var customrow = $(this.customrowhtml).insertBefore(
-                this.upperrow);
+            if (this.middlerow) {
+                var customrow = $(this.customrowhtml).insertBefore(
+                    this.middlerow);
+            } else {
+                var customrow = $(this.customrowhtml).insertBefore(
+                    this.upperrow);
+            }
             customrow.children().eq(0).addClass(
                 this.upperrow.firstChild.className);
             this._updateCloudyIcon(this.upperrow, true);
@@ -68,19 +56,15 @@ View.prototype.checkCompose = function() {
         }
         if ($(this.lowerrow).is(":visible")) {
             if (this.currentrow !== this.lowerrow) {
-                this._swapRows(this.upperrow, this.lowerrow);
+                this._swapRows(this.currentrow, this.lowerrow);
             } 
-        } else {
-            if (!this.upperrow.initialized) {
-                $($(this.upperrow).find("span").filter("[role=link]")
-                    .filter(":contains('Attach')")).click(function() {
-                        // e.stopPropagation();
-                        cloudy_view.expectClick = true;
-                    });
-                this.upperrow.initialized = true;
-            } 
+        } else if (this.middlerow && $(this.middlerow).is(":visible")) {
+            if (this.currentrow !== this.middlerow) {
+                this._swapRows(this.currentrow, this.middlerow);
+            }
+        }  else if ($(this.upperrow).is(":visible")) {
             if (this.currentrow !== this.upperrow) {
-                this._swapRows(this.lowerrow, this.upperrow);
+                this._swapRows(this.currentrow, this.upperrow);
             }
         }
     }
@@ -103,6 +87,9 @@ View.prototype._toggleEnabled = function() {
     this.enabled = !this.enabled;
     this._updateCloudyIcon(this.lowerrow, false);
     this._updateCloudyIcon(this.upperrow, false);
+    if (this.middlerow) {
+        this._updateCloudyIcon(this.middlerow, false);
+    }
 }
 
 /* Given a row, adds the Cloudy icon to the first element of that row.
@@ -180,7 +167,6 @@ View.prototype._simulateLocalAttachment = function() {
             cloudy_view.tmpinputelem = null;
         });
     }
-    console.log("simulating click()");
     $(this.tmpinputelem).trigger('click');
 }
 
@@ -235,11 +221,6 @@ View.prototype.updateDownloadView = function(dwnldViewId, state) {
  * the file.
  */
 View.prototype._initInputElement = function(elem) {
-    if (!this.expectClick) {
-        return;
-    }
-    this.expectClick = false;
-
     var cloudy_view = this;
     $(elem).click(function (e) {
         if (cloudy_view.enabled && Gmailr.filepickerLoaded){
@@ -304,15 +285,11 @@ View.prototype._interposeCreateElem = function() {
             htmlstr.replace("input", "div");
         }*/
         var result = top.document.gmail_createElement(htmlstr);
-        console.log("Called createElem, expectClick is " + 
-            cloudy_view.expectClick);
-        if (cloudy_view.expectClick) {
-            if (orig_htmlstr.indexOf("div") !== -1) {
-                cloudy_view._initContainerDiv(result);
-            } /*else if (orig_htmlstr.indexOf("input") !== -1) {
-                cloudy_view._initInputElement(result); 
-            }*/
-        }
+        if (orig_htmlstr.indexOf("div") !== -1) {
+            cloudy_view._initContainerDiv(result);
+        } /*else if (orig_htmlstr.indexOf("input") !== -1) {
+            cloudy_view._initInputElement(result); 
+        }*/
         return result;
     }
 }
@@ -347,10 +324,6 @@ View.prototype._init = function() {
     // interpose on key document functions to catch when the user is
     // attaching a file
     this._interposeCreateElem();
-
-    // We do not yet expect a click, so don't instrument DOM elements if
-    // one that looks like an <input type="file"> is created
-    this.expectClick = false;
 
     // set View as enabled. Marking this as false effectively disables the 
     // entire extension, as it will no longer receive any inputs.
