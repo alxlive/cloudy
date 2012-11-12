@@ -21,6 +21,11 @@ var ViewManager = function () {
             return cloudy_view;
         }
 
+        /* Look for an element named "subject". If found, then a Compose window
+         * must be open. If a DOM element with name "from" exists, and it is of
+         * type "input", then we must be encountering the new Gmail Compose. 
+         * Otherwise, we're dealing with the old one. 
+         */
         var checkCompose = function() {
             if (enabled && document.getElementsByName("subject").length) {
                 if (!document.getElementsByName("from").length || 

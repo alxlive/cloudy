@@ -25,8 +25,6 @@ var UpdatedView = function () {
         // enabled/disabled boolean
         var view_enabled;
 
-        // Gmail's last-created <input type="file"> element
-        var gmail_inputelem;
         // a temporary <input type="file"> element. Used when simulating local
         // attachments (when the users has turned Cloudy off)
         var tmpinputelem;
@@ -64,29 +62,30 @@ var UpdatedView = function () {
             // This should never happen. If we don't have a handle to the input 
             // element added by Gmail, we cannot signal to Gmail that files 
             // were added.
-            if (!gmail_inputelem) {
+            var inputElem = composeMessages[messageId].inputElem;
+            if (!inputElem) {
                 alert("General error in Cloudy extension. " + 
                     "Disabling and reverting to regular " +
                     "attachment mechanism.");
                 view_enabled = false;
                 return;
             } 
-            gmail_inputelem.files = filesArray;
-            if (!gmail_inputelem.parentNode) {
+            inputElem.files = filesArray;
+            if (!inputElem.parentNode) {
                 // Gmail removes the <input type="file"> element upon detecting 
                 // that the user chose a file. If already removed because of 
                 // another attachment, we insert the element back into the DOM, 
                 // so that we don't get a nullPointer error when Gmail calls 
                 // removeChild() on its parent.
-                gmail_inputelem.style.display = "none";
-                $(gmail_inputelem).prependTo($(document.body));
+                inputElem.style.display = "none";
+                $(inputElem).prependTo($(document.body));
             }
-            if ("fireEvent" in composeMessages[messageId].fakeElem)
-                composeMessages[messageId].fakeElem.fireEvent("onchange");
+            if ("fireEvent" in inputElem)
+                inputElem.fireEvent("onchange");
             else {
                 var evt = top.document.createEvent("HTMLEvents");
                 evt.initEvent("change", false, true);
-                composeMessages[messageId].fakeElem.dispatchEvent(evt);
+                inputElem.dispatchEvent(evt);
             }
         }
 
@@ -239,32 +238,13 @@ var UpdatedView = function () {
                     simulateLocalAttachment();
                 }
             });
-            /* Override the default addEventListener method. This is 
-             * necessary to fix a Gmail bug where the <input> element
-             * gets two listeners associated to it. Once a file is chosen,
-             * both get triggered. The first one attaches the file (usually
-             * to the wrong email) and deletes the <input> element. The 
-             * second one proceeds to also attempt to delete the <input>
-             * element by calling removeChild() on its parent, but since it
-             * no longer has a parent, this results in a nullpointer. 
-             * 
-             * Overriding the event listener lets us add a fake element
-             * for each email, and attach the listener to that element.
-             * When the time comes to trigger one of the listeners,
-             * we fire an event on the corresponding fake element -- 
-             * thus only one listener gets triggered, and we're guaranteed
-             * the file will get attached to the correct email. 
+            /* Remember the <input> element associated with this 
+             * message, so that we can later simulate a "change"
+             * event on it.
              */
-            elem.oldAddEventListener = elem.addEventListener;
-            elem.addEventListener = function(type, listener, useCapture) {
-                var currentEmail = $(document.activeElement).children()
+            var currentMsg = $(document.activeElement).children()
                     .children().children().eq(0)[0];
-                var fakeElem = document.createElement("div");
-                fakeElem.addEventListener(type, listener, useCapture);
-                composeMessages[currentEmail.id]["fakeElem"] = 
-                    fakeElem;
-            }
-            gmail_inputelem = elem;
+            composeMessages[currentMsg.id]["inputElem"] = elem;
         }
 
         /* Gmail uses a container div to create <input type="file"> elements.
