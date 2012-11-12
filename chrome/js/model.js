@@ -24,8 +24,8 @@ var Model = function (workerblob) {
         /* Create a file handler to download the file from the 
          * cloud. 
          */
-        this.addFileHandler = function(FPFile, cb) {
-            var fhandler = new FileHandler(FPFile, cb);
+        this.addFileHandler = function(FPFile, cb, messageId) {
+            var fhandler = new FileHandler(FPFile, cb, messageId);
             fileHandlers[fhandler.id] = fhandler;
             fhandler.downloadFile();
         }
@@ -74,12 +74,13 @@ Model.getInstance = function(){
 
 /* HELPER OBJECT: FileHandler */
 
-var FileHandler = function(FPFile, cb) {
+var FileHandler = function(FPFile, cb, messageId) {
     this.fpfile = FPFile;
     // use filename + current time as ID, to allow a user to attach same
     // file twice (don't know why a user would want that, but let's not
     // limit them).
     this.id = removeWhitespace(FPFile.filename) + (new Date()).getTime();
+    this.messageId = messageId;
     this.cb = cb;
 }
 
@@ -95,7 +96,8 @@ FileHandler.prototype.fileProcessed = function(data) {
 
     var files = [blob];
           
-    this.cb({cmd: "done", state: "done", dwnldViewId: this.id}, files);
+    this.cb(this.messageId, {cmd: "done", state: "done", dwnldViewId: this.id},
+        files);
 
     Model.getInstance().deleteFileHandler(this.id);
 }
@@ -116,7 +118,8 @@ FileHandler.prototype.completeDownload = function(data) {
     // We are using our own base64decode function
     // anyway, in the worker script.
 
-    this.cb({cmd: "updateView", dwnldViewId: this.id, state: "processing"});
+    this.cb(this.messageId, 
+        {cmd: "updateView", dwnldViewId: this.id, state: "processing"});
 
     Model.getInstance().getWorker().postMessage({cmd: "decode", datastr: data, 
                                                  handlerId: this.id}, [])
@@ -129,10 +132,12 @@ FileHandler.prototype.completeDownload = function(data) {
 FileHandler.prototype.downloadFile = function() {
     var FPFile = this.fpfile;
 
-    this.cb({cmd: "create", dwnldViewId: this.id, state: "started", 
+    this.cb(this.messageId,
+        {cmd: "create", dwnldViewId: this.id, state: "started", 
              filename: FPFile.filename, size: FPFile.size});
     if (FPFile.size > MAX_ATTACHMENT_SIZE) {
-        this.cb({cmd: "error", dwnldViewId: this.id, state: "maxSizeExceeded"});
+        this.cb(this.messageId,
+            {cmd: "error", dwnldViewId: this.id, state: "maxSizeExceeded"});
         Model.getInstance().deleteFileHandler(this.id);
 	return;
     }
@@ -147,7 +152,8 @@ FileHandler.prototype.downloadFile = function() {
             fhandler.completeDownload.apply(fhandler, arguments);
         }, 
         function(fperror) {
-            fhandler.cb({cmd: "error", state: "error", dwnldViewId: this.id});
+            fhandler.cb(fhandler.messageId, 
+                {cmd: "error", state: "error", dwnldViewId: this.id});
         }, function(percent) {
             // for some reason this function never gets called. 
             // Submitted feedback to Filepicker.io.

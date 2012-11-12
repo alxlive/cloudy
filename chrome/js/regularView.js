@@ -1,14 +1,22 @@
 /* The view. This takes care of hooking into the Gmail page,
  * and sending appropriate events to the controller whenever
  * the user or Gmail does something we're interested in.
+ *
+ * There are two views: RegularView and UpdatedView. 
+ * RegularView takes care of interposing on the old 
+ * Gmail Compose, whereas UpdatedView is for the new 
+ * Compose that came out in November 2012. 
  */
 
-var View = function () {
+var RegularView = function () {
     if (arguments.callee.singleton_instance) {
+        // return existing instance
         return arguments.callee.singleton_instance;
     }
 
+    // create singleton instance
     arguments.callee.singleton_instance = new (function () {
+
 /* PROPERTIES */
 
         // reference to the view ("this")
@@ -116,7 +124,7 @@ var View = function () {
          * progress information to the user for each file upload.
          */
         var checkCompose = function() {
-            if ($("textarea").filter("[name=to]").length) {
+            if (document.getElementsByName("to").length) {
                 if ($("span.cloudy_icon_container")[0] === undefined) {
                     var subjectrow = $($("div[role=main]").find("input")
                         .filter("[name=subject]").parents("tr")[0]);
@@ -261,7 +269,10 @@ var View = function () {
             container.orig_removeChild = container.removeChild;
             container.removeChild = function(child) {
                 child = this.orig_removeChild(child);
-                if (child.tagName && child.tagName.toLowerCase() === "input" &&
+                var currentElem = document.activeElement;
+                if (currentElem.innerText.length < 30 && 
+                    currentElem.innerText.indexOf("Attach") === 0 && 
+                    child.tagName && child.tagName.toLowerCase() === "input" &&
                         child.type && child.type.toLowerCase() === "file") {
                     var parentdiv = top.document.createElement("div");
                     parentdiv.appendChild(child);
@@ -287,23 +298,20 @@ var View = function () {
         var interposeCreateElem = function() {
             top.document.gmail_createElement = top.document.createElement;
             top.document.createElement = function(htmlstr) {
-                var orig_htmlstr = htmlstr;
-                // Instead of modifying <input> elements at this stage,
-                // need to look further when their "type" is assigned.
-                // If it is type="file", then need to set "type" to something
-                // else and instrument the element. 
-                // So far this is not necessary, but if the Gmail implementation
-                // changes we'll need to look into it.
-                /*if (this.expectClick && 
-                        orig_htmlstr.indexOf("input") !== -1) {
+                var currentElem = document.activeElement;
+                var result;
+                if (currentElem.innerText.length < 30 && 
+                        currentElem.innerText.indexOf("Attach") === 0 && 
+                        htmlstr.indexOf("input") !== -1) {
                     htmlstr.replace("input", "div");
-                }*/
-                var result = top.document.gmail_createElement(htmlstr);
-                if (orig_htmlstr.indexOf("div") !== -1) {
-                    initContainerDiv(result);
-                } /*else if (orig_htmlstr.indexOf("input") !== -1) {
+                    result = top.document.gmail_createElement(htmlstr);
                     cloudy_view._initInputElement(result); 
-                }*/
+                } else if (htmlstr.indexOf("div") !== -1) {
+                    result = top.document.gmail_createElement(htmlstr);
+                    initContainerDiv(result);
+                } else {
+                    result = top.document.gmail_createElement(htmlstr);
+                }
                 return result;
             }
         }

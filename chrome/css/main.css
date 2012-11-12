@@ -9,5 +9,51 @@
 }
 
 .cloudy_invisible {
-    display: none;
+    display: none !important;
+}
+
+.cloudy_visible {
+    display: "" !important;
+}
+
+.cloudy_icon_updatedview {
+    background-size: 21px 16px !important;
+    background-position: 0 0px !important;
+}
+
+.cloudy_updatedview_download {
+    background-color: whiteSmoke;
+    border: 1px solid gainsboro;
+    font-weight: bold;
+    margin: 10px;
+    padding: 4px 4px 4px 8px;
+}
+
+.cloudy_updatedview_download_wrapper {
+    display: inline-block;
+    max-width: 330px;
+    overflow: hidden;
+    padding: 3px 0;
+    text-overflow: ellipsis;
+    vertical-align: bottom;
+    white-space: nowrap;
+}
+
+.cloudy_updatedview_download_size {
+    color: #777;
+    display: inline-block;
+    padding: 3px 3px;
+}
+
+.cloudy_updatedview_download_statusicon {
+    /* background: url('//ssl.gstatic.com/ui/v1/icons/common/x_8px.png') no-repeat 0 0; */
+    cursor: pointer;
+    float: right;
+    height: 16px;
+    opacity: .5;
+    width: 16px;
+}
+
+.cloudy_updatedview_download_msg {
+    color: lightCoral;
 }

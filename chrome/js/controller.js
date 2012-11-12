@@ -10,31 +10,34 @@ var Controller = function () {
     arguments.callee.singleton_instance = new (function () {
         var controller;
         var model;
-        var view;
+        var viewManager;
 
         /* File Handler in the model calls this function back to signify a 
          * change in status for its file download/processing.
          */
-        var processDownloadEvent = function(msg, /* array */ files) { 
+        var processDownloadEvent = function(messageId, msg, /* array */ files) { 
             if (msg.cmd === "create") {
-                view.addDownloadView(msg.dwnldViewId, msg.filename, msg.size);
+                viewManager.getView().addDownloadView(msg.dwnldViewId, 
+                    msg.filename, msg.size, messageId);
                 return;
             }
-            view.updateDownloadView(msg.dwnldViewId, msg.state);
+            viewManager.getView().updateDownloadView(msg.dwnldViewId, 
+                msg.state, messageId);
             if (msg.cmd === "done") {
-                view.attachFiles(files);
+                viewManager.getView().attachFiles(files, messageId);
             }
         }
 
         /* The view calls this callback whenever an element we have subscribed 
          * to occurs. So far we have only subscribed to the "attach" event. 
          */ 
-        var processViewEvent = function(msg, FPFile) {
+        var processViewEvent = function(msg, FPFile, messageId) {
             if (msg === "attach") {
                 model.addFileHandler(FPFile, 
                     function() {
                         processDownloadEvent.apply(controller, arguments);
-                    });
+                    },
+                    messageId);
             }
         }
 
@@ -47,9 +50,9 @@ var Controller = function () {
             var workerblob = new Blob([templates.decodeWorker]);
 
             model = new Model(workerblob);
-            view = new View();
+            viewManager = new ViewManager();
             controller = this;
-            view.addObserver(function() {
+            viewManager.addViewObserver(function() {
                 processViewEvent.apply(controller, arguments)
             });
         }

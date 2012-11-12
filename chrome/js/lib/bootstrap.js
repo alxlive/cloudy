@@ -44,12 +44,19 @@ if(top.document == document) {
     addData("gmailr_path",     chrome.extension.getURL("js/lib/gmailr.js"));
     addData("main_path",       chrome.extension.getURL("js/main.js"));
     addData("model_path",      chrome.extension.getURL("js/model.js"));
-    addData("view_path",       chrome.extension.getURL("js/view.js"));
+    addData("viewmanager_path",       
+        chrome.extension.getURL("js/viewManager.js"));
+    addData("regularview_path",       
+        chrome.extension.getURL("js/regularView.js"));
+    addData("updatedview_path",       
+        chrome.extension.getURL("js/updatedView.js"));
     addData("utils_path",      chrome.extension.getURL("js/utils.js"));
     addData("constants_path",  chrome.extension.getURL("js/constants.js"));
     addData("controller_path", chrome.extension.getURL("js/controller.js"));
     addData("cloudiconon_path",  
         chrome.extension.getURL("images/cloudIconOn.png"));
+    addData("cloudicon_newcompose_thick_path", 
+        chrome.extension.getURL("images/cloudyicon_thick_cropped_dark.png"));
     addData("cloudiconoff_path", 
         chrome.extension.getURL("images/cloudIconOff.png"));
     addData("erroricon_path",
