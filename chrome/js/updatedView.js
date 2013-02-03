@@ -153,9 +153,8 @@ var UpdatedView = function () {
                         //$(this).css("background-image", "url(" + 
                         //    getData("cloudicon_newcompose_thick_path") + ")");
                         $(this).css("cssText", "background: " + 
-                            "url(chrome-extension://pdhmkjcpocgaefbecbfhdbbb" + 
-                            "dnogbfkb/images/cloudyicon_thick_cropped_dark." + 
-                            "png) no-repeat 0px 0px / 21px 16px!important");
+                            "url(" + getData("cloudicon_newcompose_thick_path")+
+                            ") no-repeat 0px 0px / 21px 16px!important");
                         $(this).addClass("cloudy_icon_updatedview");
                         composeMessages[this.id] = {};
                         // This <span> is the element above which we'll inject
