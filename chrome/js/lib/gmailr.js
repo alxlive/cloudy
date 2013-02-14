@@ -196,20 +196,9 @@
 
                 // get handle on the left menu
                 if(!this.leftMenu || this.leftMenu.length == 0) {
-//                  this.leftMenu = el.find('.no .nM .TK').first().closest('.nn');
+                    this.leftMenu = el.find('div.nH.oy8Mbf.nn.aeN');
 
-                    // use the inbox link as an anchor
-                    var v = el.find('a[href$="#inbox"][title^="Inbox"]');
-                    if(v.length > 0) this.inboxLink = v.first();
-
-                    var v = el.find('a[href$="#mbox"]');
-                    if(v.length > 0) this.priorityInboxLink = v.first();
-
-                    if(this.inboxLink) {
-                        this.leftMenu = this.inboxLink.closest('.TO').closest('div');
-                    } else if(this.priorityInboxLink) {
-                        this.leftMenu = this.priorityInboxLink.closest('.TO').closest('div');
-                    }
+                    this.inboxLink = el.find('div.nH.oy8Mbf.nn.aeN').find("a.J-Ke.n0").eq(0);
 
                     if(this.leftMenu && this.leftMenu.length > 0) {
                         this.leftMenuItems = this.leftMenu.find('.TO');

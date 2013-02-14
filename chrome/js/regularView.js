@@ -270,9 +270,7 @@ var RegularView = function () {
             container.removeChild = function(child) {
                 child = this.orig_removeChild(child);
                 var currentElem = document.activeElement;
-                if (currentElem.innerText.length < 30 && 
-                    currentElem.innerText.indexOf("Attach") === 0 && 
-                    child.tagName && child.tagName.toLowerCase() === "input" &&
+                if (child.tagName && child.tagName.toLowerCase() === "input" &&
                         child.type && child.type.toLowerCase() === "file") {
                     var parentdiv = top.document.createElement("div");
                     parentdiv.appendChild(child);

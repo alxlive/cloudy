@@ -161,8 +161,8 @@ var UpdatedView = function () {
                         // notification areas in the Compose window we're 
                         // currently initializing.
                         composeMessages[this.id]["injectionPoint"] = 
-                            $(this).parents("tbody").find("span")
-                                .filter(":contains('Attach')").parents().eq(0);
+                            $(this).parents("tbody").find("span.el.vK")
+                                .parents().eq(0);
                         $(this).data("cloudy_initialized", true);
                     }
                 });
