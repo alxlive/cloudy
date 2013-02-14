@@ -1,6 +1,6 @@
 {
   "name": "Cloudy",
-  "version": "0.2.3.0",
+  "version": "0.2.3.1",
   "description": "Attach to Gmail from the cloud!",
   "icons": { "16": "icon16.png",
              "48": "icon48.png",
