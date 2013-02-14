@@ -28,9 +28,7 @@ var ViewManager = function () {
          */
         var checkCompose = function() {
             if (enabled && document.getElementsByName("subject").length) {
-                if (!document.getElementsByName("from").length || 
-                    document.getElementsByName("from")[0].tagName
-                        .toLowerCase() !== "input") {
+                if (!document.getElementsByClassName("I5").length) {
                     // Gmail's old interface
                     cloudy_view = new RegularView();
                 } else {
