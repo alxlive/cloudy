@@ -67,4 +67,10 @@ TODOs
 
 2. All files are currently downloaded encoded in base64. This is unnecessary for text content. Download text without encoding it on Filepicker's end and decoding it on our end.
 
-3. Rewrite Model, View, and Controller to have truly private variables and functions, and not pseudo-private (names starting with '_') as they are now.
+3. Add possibility to download files to the cloud.
+
+4. Add "Options" page for users to be able to choose which Cloud services show up in their dialog. (Careful for new services Filepicker might add in the future though).
+
+5. Add "Attached using Cloudy for Gmail" to the bottom of emails to spread the word.
+
+6. Style the dialog to be prettier, place Cloudy icon instead of "Filepicker.io".
