@@ -92,8 +92,9 @@ var RegularView = function () {
             var progdiv = $(downloaddivhtml).appendTo("#filepicker_downloads");
             progdiv.attr("id", dwnldViewId);
             $("#filepicker_customrow").css("display", "table-row");
+            var sizestr = isNaN(size) ? "" : "" + Math.ceil(size/1024) + "K";
             progdiv.find("span").filter("#filename").html(filename + "  " + 
-                Math.ceil(size/1024) + "K");
+                sizestr);
             progdiv.find("#download_status_img").attr("src", 
                 getData("downloadloading_path"));
         }

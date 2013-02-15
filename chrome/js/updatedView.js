@@ -100,8 +100,9 @@ var UpdatedView = function () {
             downloadview.parents().eq(1).css("display", "");
             downloadview.find(".cloudy_updatedview_download_filename").text(
                 filename);
+            var sizestr = isNaN(size) ? "" : "(" + Math.ceil(size/1024) + "K)";
             downloadview.find(".cloudy_updatedview_download_size").html(
-                "(" + Math.ceil(size/1024) + "K)");
+                sizestr);
             downloadview.find(".cloudy_updatedview_download_statusicon")
                 .attr("src", 
                 getData("downloadloading_path"));
