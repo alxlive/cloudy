@@ -1,7 +1,7 @@
 {
-  "name": "Cloudy",
-  "version": "0.2.3.3",
-  "description": "Attach to Gmail from the cloud!",
+  "name": "Cloudy for Gmail™",
+  "version": "0.2.3.5",
+  "description": "Gmail™ attachments from the cloud! Attach files effortlessly from Dropbox, Box, GDrive, Facebook, Instagram, Evernote and many more.",
   "options_page": "options.html",
   "icons": { "16": "icon16.png",
              "48": "icon48.png",
