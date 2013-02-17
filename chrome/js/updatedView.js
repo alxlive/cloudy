@@ -128,6 +128,13 @@ var UpdatedView = function () {
 
 /* PRIVATE METHODS */
 
+        /* Retrieve data passed by content script.
+         */
+        var getBootstrapData = function(id) {
+            return document.getElementById(id + "_gmailr_data")
+                .getAttribute('data-val');
+        }
+
         /* Called every second by a timer. Checks if the user has a new-style 
          * Compose window open in Gmail. This is done by checking the page 
          * for textareas named "subject". For each uninitialized such textarea,
@@ -223,6 +230,14 @@ var UpdatedView = function () {
          * into a <div>). 
          */
         var initInputElement = function(elem) {
+            /* Remember the <input> element associated with this 
+             * message, so that we can later simulate a "change"
+             * event on it.
+             */
+            var currentMsg = $(document.activeElement).children()
+                    .children().children().eq(0)[0];
+            composeMessages[currentMsg.id]["inputElem"] = elem;
+
             /* Define behavior on click() -- open a FilePicker 
              * dialog and, once the user chooses a file, notify Controller (by
              * firing an attach event), which will take care of creating a 
@@ -234,20 +249,39 @@ var UpdatedView = function () {
                 if (view_enabled && Gmailr.filepickerLoaded){
                     e.preventDefault();
                     filepicker.pick(function(FPFile) {
+                        // user successfully picked a file
+                        // fire "attach" event
                         view_callbacks.fire("attach", FPFile, 
                             currentEmail.id);
+
+                        // add signature to email (if option enabled)
+                        var signature_enabled = 
+                            getBootstrapData("cloudy_signature");
+                        if (signature_enabled === "true") {
+                            // find "editable" div
+                            var email_textarea = $(currentEmail).parents(".I5")
+                                .find("div.editable");
+                            if (composeMessages[currentMsg.id].addedSignature) {
+                                return;
+                            }
+
+                            var link = $("<div />").addClass(
+                                "cloudy_share_link").html("<p>Sent with <a hr" +
+                                "ef='https://chrome.google.com/webstore/detai" +
+                                "l/cloudy/fcfnjfpcmnoabmbhponbioedjceaddaa' " +
+                                "target='_blank' >Cloudy for Gmail</a></p>");
+
+                            $("<br />").appendTo(email_textarea);
+                            $("<br />").appendTo(email_textarea);
+                            link.appendTo(email_textarea);
+                            composeMessages[currentMsg.id].addedSignature = 
+                                true;
+                        }
                     });
                 } else {
                     simulateLocalAttachment();
                 }
             });
-            /* Remember the <input> element associated with this 
-             * message, so that we can later simulate a "change"
-             * event on it.
-             */
-            var currentMsg = $(document.activeElement).children()
-                    .children().children().eq(0)[0];
-            composeMessages[currentMsg.id]["inputElem"] = elem;
         }
 
         /* Gmail uses a container div to create <input type="file"> elements.

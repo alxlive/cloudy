@@ -22,6 +22,11 @@ if(top.document == document) {
         div.setAttribute('style', "display:none");
         body.appendChild(div);
     };
+    var setData = function(id, val) {
+        var div = document.getElementById(id + "_gmailr_data");
+        div.setAttribute('data-val', val);
+        div.setAttribute('style', "display:none");
+    }
     
     // Loads a script
     var loadScript = function(path, onloadhandler) {
@@ -72,4 +77,23 @@ if(top.document == document) {
     loadScript(chrome.extension.getURL("js/lib/lab.js"), function() {
         loadScript(chrome.extension.getURL("js/lib/init.js"));
     });
+    var storage = chrome.storage.sync;
+    storage.get("signature", function(items){
+        var signature = items.signature;
+        if (typeof items.signature === "undefined") {
+            storage.set({"signature": true});
+            signature = true;
+        }
+        addData("cloudy_signature", signature);
+    });
+    chrome.storage.onChanged.addListener(
+        function (changes, areaName){
+            console.log("areaname is " + areaName)
+            if (areaName === "sync") {
+                // Cloudy does not use "local" storage
+                setData("cloudy_signature", changes.signature.newValue);
+            } 
+            console.log("old value: " + changes.signature.oldValue);
+            console.log("new value: " + changes.signature.newValue);
+        });
 };
