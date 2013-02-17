@@ -1,6 +1,6 @@
 // Save this script as `options.js`
 
-var storage = chrome.storage.sync;
+var storage = chrome.storage.local;
 var signature_box = document.getElementById("cloudy_signature");
 
 // Saves options to localStorage.
@@ -20,14 +20,7 @@ function save_options() {
 function restore_options() {
     storage.get("signature", function(items) {
         if (typeof items.signature === "undefined") {
-            storage.set({ "signature": true }, function (){
-                var status = document.getElementById("status");
-                // Update status to let user know options were saved.
-                status.innerHTML = "Options Saved.";
-                setTimeout(function() {
-                    status.innerHTML = "";
-                    }, 750);
-            });
+            storage.set({ "signature": true });
         } else {
             signature_box.checked = items.signature;
         }
