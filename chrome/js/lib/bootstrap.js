@@ -77,7 +77,7 @@ if(top.document == document) {
     loadScript(chrome.extension.getURL("js/lib/lab.js"), function() {
         loadScript(chrome.extension.getURL("js/lib/init.js"));
     });
-    var storage = chrome.storage.sync;
+    var storage = chrome.storage.local;
     storage.get("signature", function(items){
         var signature = items.signature;
         if (typeof items.signature === "undefined") {
@@ -89,7 +89,7 @@ if(top.document == document) {
     chrome.storage.onChanged.addListener(
         function (changes, areaName){
             console.log("areaname is " + areaName)
-            if (areaName === "sync") {
+            if (areaName === "local") {
                 // Cloudy does not use "local" storage
                 setData("cloudy_signature", changes.signature.newValue);
             } 
