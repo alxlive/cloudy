@@ -254,12 +254,21 @@ var UpdatedView = function () {
                     if (services_enabled !== "undefined") {
                         options.services = window.JSON.parse(services_enabled);
                     }
-                    filepicker.pickMultiple(options, function(fpfiles) {
+                    var multifile = getBootstrapData("cloudy_multifile");
+                    var pickfunc = multifile === "multiple"? 
+                        filepicker.pickMultiple : filepicker.pick;
+                    pickfunc(options, function(fpfiles) {
                         // user successfully picked one or more files
                         // fire "attach" event
-                        for (var i = 0; i < fpfiles.length; i++) {
-                            view_callbacks.fire("attach", fpfiles[i], 
+                        if (Object.prototype.toString.call(fpfiles) !==
+                            '[object Array]') {
+                            view_callbacks.fire("attach", fpfiles, 
                                 currentEmail.id);
+                        } else {
+                            for (var i = 0; i < fpfiles.length; i++) {
+                                view_callbacks.fire("attach", fpfiles[i], 
+                                    currentEmail.id);
+                            }
                         }
 
                         // add signature to email (if option enabled)
@@ -269,7 +278,10 @@ var UpdatedView = function () {
                             // find "editable" div
                             var email_textarea = $(currentEmail).parents(".I5")
                                 .find("div.editable");
-                            if (composeMessages[currentMsg.id].addedSignature) {
+                            if (composeMessages[currentMsg.id].addedSignature ||
+                                    email_textarea.eq(0)
+                                    .find("a:contains('Cloudy for Gmail')")
+                                    .length > 0) {
                                 return;
                             }
 

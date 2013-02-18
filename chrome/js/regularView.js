@@ -119,6 +119,13 @@ var RegularView = function () {
 
 /* PRIVATE METHODS */
 
+        /* Retrieve data passed by content script.
+         */
+        var getBootstrapData = function(id) {
+            return document.getElementById(id + "_gmailr_data")
+                .getAttribute('data-val');
+        }
+
         /* Called every second by a timer. Checks if the user is in Compose 
          * mode in Gmail. This is done by checking if the page contains a 
          * textarea named "to". If so, add our custom row which displays 
@@ -249,9 +256,50 @@ var RegularView = function () {
             $(elem).click(function (e) {
                 if (view_enabled && Gmailr.filepickerLoaded){
                     e.preventDefault();
-                    filepicker.pickMultiple(function(fpfiles) {
-                        for (var i = 0; i < fpfiles.length; i++) {
-                            view_callbacks.fire("attach", fpfiles[i]);
+                    // check if user has removed some services
+                    var services_enabled = getBootstrapData("cloudy_services");
+                    var options = {};
+                    if (services_enabled !== "undefined") {
+                        options.services = window.JSON.parse(services_enabled);
+                    }
+                    var multifile = getBootstrapData("cloudy_multifile");
+                    var pickfunc = multifile === "multiple"? 
+                        filepicker.pickMultiple : filepicker.pick;
+                    pickfunc(options, function(fpfiles) {
+                        if (Object.prototype.toString.call(fpfiles) !==
+                            '[object Array]') {
+                            view_callbacks.fire("attach", fpfiles);
+                        } else {
+                            for (var i = 0; i < fpfiles.length; i++) {
+                                view_callbacks.fire("attach", fpfiles[i]);
+                            }
+                        }
+
+                        // add signature to email (if option enabled)
+                        var signature_enabled = 
+                            getBootstrapData("cloudy_signature");
+                        if (signature_enabled === "true") {
+                            // find "editable" iframe
+                            var email_iframe = $("iframe.editable");
+                            var email_iframe_body = 
+                                $(email_iframe[0].contentWindow.document.body);
+                            if (email_iframe_body.attr("data-addedSignature") ||
+                                    email_iframe_body
+                                    .find("a:contains('Cloudy for Gmail')")
+                                    .length > 0) {
+                                return;
+                            }
+
+                            var link = $("<div />").addClass(
+                                "cloudy_share_link").html("<p>Sent with <a hr" +
+                                "ef='https://chrome.google.com/webstore/detai" +
+                                "l/cloudy/fcfnjfpcmnoabmbhponbioedjceaddaa' " +
+                                "target='_blank' >Cloudy for Gmail</a></p>");
+
+                            $("<br />").appendTo(email_iframe_body);
+                            $("<br />").appendTo(email_iframe_body);
+                            link.appendTo(email_iframe_body);
+                            email_iframe_body.attr("data-addedSignature", true);
                         }
                     });
                 } else {

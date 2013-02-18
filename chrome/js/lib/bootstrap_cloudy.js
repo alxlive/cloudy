@@ -39,6 +39,15 @@ if(top.document == document) {
         }
         headID.appendChild(newScript);
     };
+    var getEnabledFPServices = function(services) {
+        var enabled = new Array();
+        if (typeof services !== "undefined") {
+            for (var i = 0; i < services.enabled.length; i++) {
+                enabled.push(services.enabled[i].keyword);
+            }
+        }
+        return enabled.length ? enabled : undefined;
+    }
     
     // Pass data to inserted scripts via DOM elements
     addData("css_path",        chrome.extension.getURL("css/main.css"));
@@ -87,8 +96,8 @@ if(top.document == document) {
         addData("cloudy_signature", signature);
     });
     storage.get("services", function(items){
-        var services = items.services;
-        addData("cloudy_services", JSON.stringify(services));
+        addData("cloudy_services", JSON.stringify(getEnabledFPServices(
+            items.services)));
     });
     storage.get("multifile", function(items) {
         var multifile = items.multifile;
@@ -112,8 +121,8 @@ if(top.document == document) {
                         setData("cloudy_multifile", changes.multifile.newValue);
                     } else if (key === "services") {
                         console.log("change in cloudy_services");
-                        setData("cloudy_services", 
-                            JSON.stringify(changes.services.newValue));
+                        setData("cloudy_services", JSON.stringify(
+                            getEnabledFPServices(changes.services.newValue)));
                     }
                 }
             } 

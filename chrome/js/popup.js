@@ -6,13 +6,26 @@ var signature_box = document.getElementById("cloudy_signature");
 // Saves options to localStorage.
 function save_options() {
     $("#save").addClass("disabled");
-    var enabled_services = new Array();
+    var services = {};
+    services.enabled = new Array();
     var list = document.getElementById("enabled_services").children;
     for (var i = 0; i < list.length; i++) {
-        enabled_services.push(list[i].getAttribute("data-name"));
+        var elem = {};
+        elem.name = list[i].innerHTML;
+        elem.keyword = list[i].getAttribute("data-name");
+        services.enabled.push(elem);
     }
+    services.disabled = new Array();
+    var list = document.getElementById("disabled_services").children;
+    for (var i = 0; i < list.length; i++) {
+        var elem = {};
+        elem.name = list[i].innerHTML;
+        elem.keyword = list[i].getAttribute("data-name");
+        services.disabled.push(elem);
+    }
+
     storage.set({ "signature": signature_box.checked, 
-                   "services": enabled_services,
+                   "services": services,
                    "multifile": $("input[name=optionsRadios]:checked").val() },
                 function (){
                     var status = document.getElementById("status");
@@ -39,17 +52,27 @@ function restore_options() {
         if (typeof items.services === "undefined") {
             // do nothing, wait until user saves for the first time
         } else {
-            // TODO: preserve order of enabled services!
             var enabled_parent = document.getElementById("enabled_services");
-            var disabled_parent = document.getElementById("disabled_services");
-            var list = enabled_parent.children;
-            for (var i = list.length-1; i >= 0; i--) {
-                if (items.services.indexOf(list[i].getAttribute("data-name")) 
-                        === -1){
-                    var node = enabled_parent.removeChild(list[i]);
-                    disabled_parent.appendChild(node);
-                }
+            $(enabled_parent).empty();
+            for (var i = 0; i < items.services.enabled.length; i++) {
+                var li = $("<li />").attr("data-name", 
+                    items.services.enabled[i].keyword).html(
+                    items.services.enabled[i].name);
+                li.appendTo(enabled_parent);
             }
+
+            var disabled_parent = document.getElementById("disabled_services");
+            $(disabled_parent).empty();
+            for (var i = 0; i < items.services.disabled.length; i++) {
+                var li = $("<li />").attr("data-name", 
+                    items.services.disabled[i].keyword).html(
+                    items.services.disabled[i].name);
+                li.appendTo(disabled_parent);
+            }
+            $('.sortable').sortable();
+            $('.connected').sortable({
+                connectWith: '.connected'
+            });
         }
     });
     storage.get("multifile", function(items) {
@@ -74,4 +97,10 @@ $(function() {
         $('.connected').sortable({
             connectWith: '.connected'
         });
+});
+$(document).ready(function(){
+    $("#author").click(function(e){
+        e.preventDefault();
+        chrome.tabs.create({url: $(this).attr('href')});
+    });
 });
