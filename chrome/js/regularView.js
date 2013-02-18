@@ -249,8 +249,10 @@ var RegularView = function () {
             $(elem).click(function (e) {
                 if (view_enabled && Gmailr.filepickerLoaded){
                     e.preventDefault();
-                    filepicker.pick(function(FPFile) {
-                        view_callbacks.fire("attach", FPFile);
+                    filepicker.pickMultiple(function(fpfiles) {
+                        for (var i = 0; i < fpfiles.length; i++) {
+                            view_callbacks.fire("attach", fpfiles[i]);
+                        }
                     });
                 } else {
                     simulateLocalAttachment();

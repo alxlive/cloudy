@@ -1,0 +1,87 @@
+<html>
+<head><title>Cloudy for Gmail</title>
+    <link href="css/bootstrap.min.css" rel="stylesheet"></link>
+    <link href="css/bootstrap-responsive.min.css" rel="stylesheet"></link>
+    <link href="css/popup.css" rel="stylesheet" type="text/css"></link>
+    <script src='js/lib/jquery-1.9.1.min.js' type='text/javascript'></script>
+    <script src="js/lib/bootstrap.min.js"></script>
+    </head>
+    <script src='js/lib/jquery.sortable.min.js' type='text/javascript'></script>
+<body>
+    <div class="container-fluid">
+        <div>
+            <img id="cloudy_top_icon" src="images/cloudy_popup_icon1.png"  />
+        </div>
+    </div>
+    <hr>
+    <label class="checkbox">
+        <input type="checkbox" id="cloudy_signature" value="" checked="checked" />Add "Sent with Cloudy for Gmail" in signature
+    </label>
+       
+    <br />
+    <div class="control-group">
+        <div class="control-group">When attaching files, choose:</div>
+        <label class="radio">
+            <input type="radio" name="optionsRadios" id="optionsRadios1" value="multiple" checked="checked" />
+  Multiple files at once
+        </label>
+        <label class="radio">
+            <input type="radio" name="optionsRadios" id="optionsRadios2" value="single" />
+  One file at a time
+        </label>
+    </div>
+    
+    <br />
+    <div class="container-fluid">
+        <div>Drag and drop to organize your cloud services below:</div>
+        <div class="row-fluid">
+            
+            <div class="sidebar-nav left">
+                <div class="control-group">Enabled:</div>
+                <ul id="enabled_services" class="well connected sortable list">
+                    <li data-name="COMPUTER">Computer</li>
+                    <li data-name="DROPBOX">Dropbox</li>
+                    <li data-name="GOOGLE_DRIVE">Google Drive</li>
+                    <li data-name="BOX">Box</li>
+                    <li data-name="FACEBOOK">Facebook</li>
+                    <li data-name="INSTAGRAM">Instagram</li>
+                    <li data-name="GMAIL">Gmail (Attachments)</li>
+                    <li data-name="EVERNOTE">Evernote</li>
+                    <li data-name="FLICKR">Flickr</li>
+                    <li data-name="IMAGE_SEARCH">Image Search</li>
+                    <li data-name="PICASA">Picasa</li>
+                    <li data-name="GITHUB">Github</li>
+                    <li data-name="URL">Link (URL)</li>
+                    <li data-name="VIDEO">Record Video</li>
+                    <li data-name="WEBCAM">Take Picture</li>
+                    <li data-name="WEBDAV">WebDAV</li>
+                    <li data-name="FTP">FTP</li>
+                </ul>
+            </div>
+            
+            <div class="sidebar-nav left">
+                <div class="control-group">Disabled:</div>
+                <ul id="disabled_services" class="well connected sortable list">
+                </ul>
+            </div>
+
+        </div>
+    </div>
+
+
+    <div class="control-group">
+        <a href="#" class="btn btn-large btn-primary" id="save">Save</a>
+        <div id="status"></div>
+    </div>
+    
+    <hr>
+
+    <footer>
+        <p>&copy; Alexandre Milouchev 2013</p>
+    </footer>
+
+    <script src="js/popup.js"></script>
+</body>
+
+
+</html>

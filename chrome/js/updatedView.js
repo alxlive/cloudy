@@ -248,11 +248,19 @@ var UpdatedView = function () {
                     .children().children().eq(0)[0];
                 if (view_enabled && Gmailr.filepickerLoaded){
                     e.preventDefault();
-                    filepicker.pick(function(FPFile) {
-                        // user successfully picked a file
+                    // check if user has removed some services
+                    var services_enabled = getBootstrapData("cloudy_services");
+                    var options = {};
+                    if (services_enabled !== "undefined") {
+                        options.services = window.JSON.parse(services_enabled);
+                    }
+                    filepicker.pickMultiple(options, function(fpfiles) {
+                        // user successfully picked one or more files
                         // fire "attach" event
-                        view_callbacks.fire("attach", FPFile, 
-                            currentEmail.id);
+                        for (var i = 0; i < fpfiles.length; i++) {
+                            view_callbacks.fire("attach", fpfiles[i], 
+                                currentEmail.id);
+                        }
 
                         // add signature to email (if option enabled)
                         var signature_enabled = 

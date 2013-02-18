@@ -1,0 +1,54 @@
+body {
+    padding-bottom: 40px;
+    width: 440px !important;
+    background-color: #bbbbbb;
+}
+
+h2 {
+    font-weight: normal;
+}
+
+#cloudy_top_icon {
+    position:relative; 
+    float:left;
+    padding: 0px 0px 0px 0px;
+    margin: 20px 0px 0px 0px;
+}
+
+.sidebar-nav {
+    padding: 9px 0;
+}
+
+.connected li, .sortable li, .exclude li, .handles li {
+    list-style: none;
+    border: 1px solid #CCC;
+    background: #F6F6F6;
+    font-family: "Tahoma";
+    color: #1C94C4;
+    margin: 5px;
+    padding: 5px;
+    height: 22px;
+    cursor: pointer;
+}
+
+li.sortable-placeholder {
+    border: 1px dashed #CCC;
+    background: none;
+}
+
+.row-fluid > .sidebar-nav {
+    position: relative;
+    top: 0;
+    left:auto;
+    width: 220px;
+}
+
+.left {
+    float:left;
+}
+
+ul {
+    padding: 0px;
+    margin: 0px 20px 0px 0px;
+}
+

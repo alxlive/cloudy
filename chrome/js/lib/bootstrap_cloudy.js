@@ -77,7 +77,7 @@ if(top.document == document) {
     loadScript(chrome.extension.getURL("js/lib/lab.js"), function() {
         loadScript(chrome.extension.getURL("js/lib/init.js"));
     });
-    var storage = chrome.storage.local;
+    var storage = chrome.storage.sync;
     storage.get("signature", function(items){
         var signature = items.signature;
         if (typeof items.signature === "undefined") {
@@ -86,14 +86,36 @@ if(top.document == document) {
         }
         addData("cloudy_signature", signature);
     });
+    storage.get("services", function(items){
+        var services = items.services;
+        addData("cloudy_services", JSON.stringify(services));
+    });
+    storage.get("multifile", function(items) {
+        var multifile = items.multifile;
+        if (typeof items.multifile === "undefined") {
+            storage.set({"multifile": "multiple"});
+            multifile = "multiple";
+        }
+        addData("cloudy_multifile", multifile);
+    });
     chrome.storage.onChanged.addListener(
         function (changes, areaName){
             console.log("areaname is " + areaName)
-            if (areaName === "local") {
+            if (areaName === "sync") {
                 // Cloudy does not use "local" storage
-                setData("cloudy_signature", changes.signature.newValue);
+                for (var key in changes) {
+                    if (key === "signature") {
+                        console.log("change in cloudy_signature");
+                        setData("cloudy_signature", changes.signature.newValue);
+                    } else if (key === "multifile") {
+                        console.log("change in cloudy_multifile");
+                        setData("cloudy_multifile", changes.multifile.newValue);
+                    } else if (key === "services") {
+                        console.log("change in cloudy_services");
+                        setData("cloudy_services", 
+                            JSON.stringify(changes.services.newValue));
+                    }
+                }
             } 
-            console.log("old value: " + changes.signature.oldValue);
-            console.log("new value: " + changes.signature.newValue);
         });
 };

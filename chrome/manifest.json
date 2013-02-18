@@ -2,14 +2,21 @@
   "name": "Cloudy for Gmail™",
   "version": "0.2.3.5",
   "description": "Gmail™ attachments from the cloud! Attach files effortlessly from Dropbox, Box, GDrive, Facebook, Instagram, Evernote and many more.",
-  "options_page": "options.html",
+  "browser_action" : {
+    "default_icon": {
+      "19": "images/cloudIconOn19_white.png",
+      "38": "images/cloudIconOn38_white.png"
+    },
+    "default_title": "Cloudy for Gmail",
+    "default_popup": "popup.html"
+  },
   "icons": { "16": "icon16.png",
              "48": "icon48.png",
             "128": "icon128.png" }, 
   "content_scripts": [
     {
       "matches": ["https://mail.google.com/*", "http://mail.google.com/*"],
-      "js": ["js/lib/bootstrap.js"],
+      "js": ["js/lib/bootstrap_cloudy.js"],
       "run_at": "document_end"
     }
   ],
@@ -32,19 +39,28 @@
     "js/main.js",
     "js/decode-worker.js", 
     "js/resources.js",
-    "js/lib/bootstrap.js", 
+    "js/popup.js",
+    "js/lib/bootstrap_cloudy.js", 
     "js/lib/gmailr.js", 
     "js/lib/init.js", 
     "js/lib/jquery.ba-bbq.js", 
     "js/lib/lab.js", 
+    "js/lib/jquery.sortable.min.js",
+    "js/lib/bootstrap.min.js",
+    "js/lib/jquery-1.9.1.min.js",
     "images/loading-ring.gif", 
     "images/checkmark.png", 
     "images/error.png",
     "images/cloudIconOn.png",
     "images/cloudIconOff.png",
     "images/cloudyicon_thick_cropped_dark.png",
+    "images/cloudIconOn52_white.png",
+    "images/cloudy_popup_icon1.png",
     "templates/downloaddiv.html", 
     "templates/customrow.html", 
-    "css/main.css"
+    "css/main.css",
+    "css/popup.css",
+    "css/bootstrap-responsive.min.css",
+    "css/bootstrap.min.css"
   ]
 }
