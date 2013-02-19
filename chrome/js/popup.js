@@ -101,7 +101,7 @@ $("#save").click(function(e) {
         return;
     }
     $(this).addClass("disabled");
-    $("#status").hide().removeClass("alert-error");
+    $("#status").stop().hide().removeClass("alert-error");
     save_options();
 });
 $(function() {

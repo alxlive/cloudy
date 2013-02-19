@@ -26,6 +26,10 @@ h2 {
     display: none;
 }
 
+#order_services h5 {
+    margin-bottom: 0px;
+}
+
 .sidebar-nav {
     padding: 9px 0;
 }

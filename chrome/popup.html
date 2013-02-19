@@ -14,13 +14,9 @@
         </div>
     </div>
     <hr>
-    <label class="checkbox">
-        <input type="checkbox" id="cloudy_signature" value="" checked="checked" />Add "Sent with Cloudy for Gmail" in signature
-    </label>
        
-    <br />
     <div class="control-group">
-        <div class="control-group">When attaching files, choose:</div>
+        <div class="control-group"><strong>When attaching files, choose:</strong></div>
         <label class="radio">
             <input type="radio" name="optionsRadios" id="optionsRadios1" value="multiple" checked="checked" />
   Multiple files at once
@@ -31,13 +27,12 @@
         </label>
     </div>
     
-    <br />
-    <div class="container-fluid">
-        <div>Drag and drop to organize your cloud services below:</div>
+    <div id="order_services" class="container-fluid">
+        <div><h5>Drag and drop to organize your cloud services below:</h5></div>
         <div class="row-fluid">
             
             <div class="sidebar-nav left">
-                <div class="control-group">Enabled:</div>
+                <div class="control-group">Drag here to enable:</div>
                 <ul id="enabled_services" class="well connected sortable list">
                     <li data-name="COMPUTER">Computer</li>
                     <li data-name="DROPBOX">Dropbox</li>
@@ -60,7 +55,7 @@
             </div>
             
             <div class="sidebar-nav left">
-                <div class="control-group">Disabled:</div>
+                <div class="control-group">Drag here to disable:</div>
                 <ul id="disabled_services" class="well connected sortable list">
                 </ul>
             </div>
@@ -69,6 +64,11 @@
     </div>
 
 
+    <label class="checkbox">
+        <input type="checkbox" id="cloudy_signature" value="" checked="checked" />Add "Sent with Cloudy for Gmail" in signature
+    </label>
+
+    <br />
     <div class="row">
         <a href="#" class="btn btn-large btn-primary pull-left" id="save">Save</a>
         <div id="status" class="alert pull-left">
