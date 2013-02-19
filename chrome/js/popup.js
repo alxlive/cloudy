@@ -5,7 +5,6 @@ var signature_box = document.getElementById("cloudy_signature");
 
 // Saves options to localStorage.
 function save_options() {
-    $("#save").addClass("disabled");
     var services = {};
     services.enabled = new Array();
     var list = document.getElementById("enabled_services").children;
@@ -28,13 +27,23 @@ function save_options() {
                    "services": services,
                    "multifile": $("input[name=optionsRadios]:checked").val() },
                 function (){
-                    var status = document.getElementById("status");
-                    // Update status to let user know options were saved.
-                    status.innerHTML = "Options Saved.";
+                    var status = $("#status");
+                    if (chrome.runtime.lastError) {
+                        // Update status to show error.
+                        status.html("<strong>An error occurred while saving." + 
+                            "</strong> Please try again.");
+                        status.addClass("alert-error");
+                        status.show();
+                    } else {
+                        // Update status to let user know options were saved.
+                        status.html("Your changes were saved successfully.");
+                        status.addClass("alert-success");
+                        status.show().delay(1000).fadeOut(800, function() {
+                            $(this).removeClass("alert-success");
+                        });
+                    }
+
                     $("#save").removeClass("disabled");
-                    setTimeout(function() {
-                        status.innerHTML = "";
-                    }, 750);
                 });
 }
 
@@ -88,10 +97,13 @@ function restore_options() {
 document.addEventListener('DOMContentLoaded', restore_options);
 $("#save").click(function(e) {
     e.preventDefault();
+    if ($(this).hasClass("disabled")) {
+        return;
+    }
     $(this).addClass("disabled");
+    $("#status").hide().removeClass("alert-error");
     save_options();
 });
-// document.querySelector('#save').addEventListener('click', save_options);
 $(function() {
         $('.sortable').sortable();
         $('.connected').sortable({
