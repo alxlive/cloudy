@@ -71,8 +71,6 @@ TODOs
 
 3. Add possibility to download files to the cloud.
 
-4. Add "Options" page for users to be able to choose which Cloud services show up in their dialog. (Careful for new services Filepicker might add in the future though).
+4. Style the dialog to be prettier, place Cloudy icon instead of "Filepicker.io".
 
-5. Add "Attached using Cloudy for Gmail" to the bottom of emails to spread the word.
-
-6. Style the dialog to be prettier, place Cloudy icon instead of "Filepicker.io".
+5. Add failure detection in case Gmail code changes and breaks Cloudy.
