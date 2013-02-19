@@ -288,8 +288,9 @@ var UpdatedView = function () {
                             var link = $jQcl("<div />").addClass(
                                 "cloudy_share_link").html("<p>Sent with <a hr" +
                                 "ef='https://chrome.google.com/webstore/detai" +
-                                "l/cloudy/fcfnjfpcmnoabmbhponbioedjceaddaa' " +
-                                "target='_blank' >Cloudy for Gmail</a></p>");
+                                "l/cloudy-for-gmail/fcfnjfpcmnoabmbhponbioedj" +
+                                "ceaddaa' target='_blank' >Cloudy for Gmail" +
+                                "</a></p>");
 
                             $jQcl("<br />").appendTo(email_textarea);
                             $jQcl("<br />").appendTo(email_textarea);

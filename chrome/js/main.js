@@ -7,8 +7,6 @@
 
 Gmailr.debug = true; // Turn verbose debugging messages on 
 
-var $jQcl = jQuery.noConflict();
-
 Gmailr.init(function(G) {
     G.insertCss(getData('css_path'));
     var head= document.getElementsByTagName('head')[0];

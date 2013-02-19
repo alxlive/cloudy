@@ -19,7 +19,9 @@ var getData = function(id) {
 // Load all dependencies and run main.js
 $LAB
 .script(getData('jquery_path'))
-.wait()
+.wait(function () {
+    window.$jQcl = jQuery.noConflict(true);
+})
 .script(getData('jquery_bbq_path'))
 .wait()
 .script(getData('gmailr_path'))

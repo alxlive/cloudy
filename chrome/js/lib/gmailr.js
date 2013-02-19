@@ -161,4 +161,4 @@
     };
 
     window.Gmailr = Gmailr;
-})(jQuery, window);
+})($jQcl, window);
