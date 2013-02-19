@@ -74,7 +74,7 @@ var RegularView = function () {
             gmail_inputelem.files = filesArray;
             if (!gmail_inputelem.parentNode) {
                 gmail_inputelem.style.display = "none";
-                $(gmail_inputelem).prependTo($(document.body));
+                $jQcl(gmail_inputelem).prependTo($jQcl(document.body));
             }
             if ("fireEvent" in gmail_inputelem)
                 gmail_inputelem.fireEvent("onchange");
@@ -89,9 +89,9 @@ var RegularView = function () {
          * the cloud. 
          */
         this.addDownloadView = function(dwnldViewId, filename, size) {
-            var progdiv = $(downloaddivhtml).appendTo("#filepicker_downloads");
+            var progdiv = $jQcl(downloaddivhtml).appendTo("#filepicker_downloads");
             progdiv.attr("id", dwnldViewId);
-            $("#filepicker_customrow").css("display", "table-row");
+            $jQcl("#filepicker_customrow").css("display", "table-row");
             var sizestr = isNaN(size) ? "" : "" + Math.ceil(size/1024) + "K";
             progdiv.find("span").filter("#filename").html(filename + "  " + 
                 sizestr);
@@ -133,14 +133,14 @@ var RegularView = function () {
          */
         var checkCompose = function() {
             if (document.getElementsByName("to").length) {
-                if ($("span.cloudy_icon_container")[0] === undefined) {
-                    var subjectrow = $($("div[role=main]").find("input")
+                if ($jQcl("span.cloudy_icon_container")[0] === undefined) {
+                    var subjectrow = $jQcl($jQcl("div[role=main]").find("input")
                         .filter("[name=subject]").parents("tr")[0]);
                     rows[0] = subjectrow.prev();
                     rows[1] = subjectrow.next();
                     rows[2] = subjectrow.next().next();
                     var customrow;
-                    customrow = $(customrowhtml).insertBefore(rows[2]);
+                    customrow = $jQcl(customrowhtml).insertBefore(rows[2]);
                     customrow.children().eq(0).addClass(
                         rows[1].children().eq(0).attr("class"));
 
@@ -171,7 +171,7 @@ var RegularView = function () {
          * visible.
          */
         var swapRows = function(row) {
-            $(view_currentrow).find("img.cloudy_icon").addClass(
+            $jQcl(view_currentrow).find("img.cloudy_icon").addClass(
                 "cloudy_invisible");
             row.find("img.cloudy_icon").removeClass("cloudy_invisible");
             view_currentrow = row;
@@ -224,19 +224,19 @@ var RegularView = function () {
          */
         var simulateLocalAttachment = function() {
             if (!tmpinputelem) {
-                tmpinputelem = $('<input type="file" class="cloudy_invisible">')
+                tmpinputelem = $jQcl('<input type="file" class="cloudy_invisible">')
                     .appendTo("#tmpparent");
                 tmpinputelem.change(function() {
                     cloudy_view.attachFiles(this.files);
-                    $(this).remove();
+                    $jQcl(this).remove();
                     tmpinputelem = null;
                 });
             }
-            $(tmpinputelem).trigger('click');
+            $jQcl(tmpinputelem).trigger('click');
         }
 
         var setDownloadViewStatus = function(dwnldViewId, text, imgurl,                                                      clear) {
-            var progdiv = $(document.getElementById(dwnldViewId));
+            var progdiv = $jQcl(document.getElementById(dwnldViewId));
             progdiv.find("#downloading_msg").text(text);
             if (imgurl)
                 progdiv.find("#download_status_img").attr("src", imgurl);
@@ -253,7 +253,7 @@ var RegularView = function () {
          * the file.
          */
         var initInputElement = function(elem) {
-            $(elem).click(function (e) {
+            $jQcl(elem).click(function (e) {
                 if (view_enabled && Gmailr.filepickerLoaded){
                     e.preventDefault();
                     // check if user has removed some services
@@ -280,9 +280,9 @@ var RegularView = function () {
                             getBootstrapData("cloudy_signature");
                         if (signature_enabled === "true") {
                             // find "editable" iframe
-                            var email_iframe = $("iframe.editable");
+                            var email_iframe = $jQcl("iframe.editable");
                             var email_iframe_body = 
-                                $(email_iframe[0].contentWindow.document.body);
+                                $jQcl(email_iframe[0].contentWindow.document.body);
                             if (email_iframe_body.attr("data-addedSignature") ||
                                     email_iframe_body
                                     .find("a:contains('Cloudy for Gmail')")
@@ -290,14 +290,14 @@ var RegularView = function () {
                                 return;
                             }
 
-                            var link = $("<div />").addClass(
+                            var link = $jQcl("<div />").addClass(
                                 "cloudy_share_link").html("<p>Sent with <a hr" +
                                 "ef='https://chrome.google.com/webstore/detai" +
                                 "l/cloudy/fcfnjfpcmnoabmbhponbioedjceaddaa' " +
                                 "target='_blank' >Cloudy for Gmail</a></p>");
 
-                            $("<br />").appendTo(email_iframe_body);
-                            $("<br />").appendTo(email_iframe_body);
+                            $jQcl("<br />").appendTo(email_iframe_body);
+                            $jQcl("<br />").appendTo(email_iframe_body);
                             link.appendTo(email_iframe_body);
                             email_iframe_body.attr("data-addedSignature", true);
                         }
@@ -378,17 +378,17 @@ var RegularView = function () {
             dwnldcompleteimgurl = getData("downloadcomplete_path");
 
             // erase data divs passed in DOM
-            $("#filepicker_customrow_template").remove();
-            $("#filepicker_customprogress_template").remove();
+            $jQcl("#filepicker_customrow_template").remove();
+            $jQcl("#filepicker_customprogress_template").remove();
              
             // add tmpparent div, used to add elements temporarily to the DOM
             var tmpParentHtml = 
-                $("<div id='tmpparent' style='display: none;'></div>");
-            tmpParentHtml.prependTo($(document.body));
+                $jQcl("<div id='tmpparent' style='display: none;'></div>");
+            tmpParentHtml.prependTo($jQcl(document.body));
 
             // initialize callbacks object, so the Controller can bind callbacks 
             // to the View.
-            view_callbacks = $.Callbacks();
+            view_callbacks = $jQcl.Callbacks();
 
             // Check for "Compose" mode every second.
             setInterval(function() {checkCompose()}, 500);

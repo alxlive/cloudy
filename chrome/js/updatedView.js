@@ -78,7 +78,7 @@ var UpdatedView = function () {
                 // so that we don't get a nullPointer error when Gmail calls 
                 // removeChild() on its parent.
                 inputElem.style.display = "none";
-                $(inputElem).prependTo($(document.body));
+                $jQcl(inputElem).prependTo($jQcl(document.body));
             }
             if ("fireEvent" in inputElem)
                 inputElem.fireEvent("onchange");
@@ -94,7 +94,7 @@ var UpdatedView = function () {
          */
         this.addDownloadView = function(dwnldViewId, filename, size,
                                         messageId) {
-            var downloadview = $(downloaddivUpdatedViewhtml)
+            var downloadview = $jQcl(downloaddivUpdatedViewhtml)
                 .prependTo(composeMessages[messageId].injectionPoint);
             downloadview.attr("id", dwnldViewId);
             downloadview.parents().eq(1).css("display", "");
@@ -143,7 +143,7 @@ var UpdatedView = function () {
          * icon.
          */
         var checkCompose = function() {
-            var tofields = $(document.getElementsByName('subject'));
+            var tofields = $jQcl(document.getElementsByName('subject'));
             var foundUninitialized = false;
             for (var i = 0; i < tofields.length; i++) {
                 if (!tofields.eq(i).data("cloudy_initialized")) {
@@ -154,24 +154,24 @@ var UpdatedView = function () {
             if (foundUninitialized) {
                 console.log("setting Cloudy icons");
                 var attachmentIcons = 
-                    $("[command=Files]").children().children()
+                    $jQcl("[command=Files]").children().children()
                      .children();
                 attachmentIcons.each(function () {
-                    if (!$(this).data("cloudy_initialized")) {
-                        //$(this).css("background-image", "url(" + 
+                    if (!$jQcl(this).data("cloudy_initialized")) {
+                        //$jQcl(this).css("background-image", "url(" + 
                         //    getData("cloudicon_newcompose_thick_path") + ")");
-                        $(this).css("cssText", "background: " + 
+                        $jQcl(this).css("cssText", "background: " + 
                             "url(" + getData("cloudicon_newcompose_thick_path")+
                             ") no-repeat 0px 0px / 21px 16px!important");
-                        $(this).addClass("cloudy_icon_updatedview");
+                        $jQcl(this).addClass("cloudy_icon_updatedview");
                         composeMessages[this.id] = {};
                         // This <span> is the element above which we'll inject
                         // notification areas in the Compose window we're 
                         // currently initializing.
                         composeMessages[this.id]["injectionPoint"] = 
-                            $(this).parents("tbody").find("span.el.vK")
+                            $jQcl(this).parents("tbody").find("span.el.vK")
                                 .parents().eq(0);
-                        $(this).data("cloudy_initialized", true);
+                        $jQcl(this).data("cloudy_initialized", true);
                     }
                 });
                 tofields.data("cloudy_initialized", true);
@@ -199,15 +199,15 @@ var UpdatedView = function () {
          */
         var simulateLocalAttachment = function(messageId) {
             if (tmpinputelem)
-                $(tmpinputelem).remove();
-            tmpinputelem = $('<input type="file" class="cloudy_invisible">')
+                $jQcl(tmpinputelem).remove();
+            tmpinputelem = $jQcl('<input type="file" class="cloudy_invisible">')
                 .appendTo("#tmpparent");
             tmpinputelem.change(function() {
                 cloudy_view.attachFiles(this.files, messageId);
-                $(this).remove();
+                $jQcl(this).remove();
                 tmpinputelem = null;
             });
-            $(tmpinputelem).trigger('click');
+            $jQcl(tmpinputelem).trigger('click');
         }
 
         /* Helper method used by updateDownloadView to set the status of a 
@@ -215,7 +215,7 @@ var UpdatedView = function () {
          */
         var setDownloadViewStatus = function(dwnldViewId, text, imgurl,
                                              clear) {
-            var progdiv = $(document.getElementById(dwnldViewId));
+            var progdiv = $jQcl(document.getElementById(dwnldViewId));
             progdiv.find(".cloudy_updatedview_download_msg").text(text);
             if (imgurl)
                 progdiv.find(".cloudy_updatedview_download_statusicon")
@@ -234,7 +234,7 @@ var UpdatedView = function () {
              * message, so that we can later simulate a "change"
              * event on it.
              */
-            var currentMsg = $(document.activeElement).children()
+            var currentMsg = $jQcl(document.activeElement).children()
                     .children().children().eq(0)[0];
             composeMessages[currentMsg.id]["inputElem"] = elem;
 
@@ -243,8 +243,8 @@ var UpdatedView = function () {
              * firing an attach event), which will take care of creating a 
              * handler to start downloading the file.
              */
-            $(elem).click(function (e) {
-                var currentEmail = $(document.activeElement).children()
+            $jQcl(elem).click(function (e) {
+                var currentEmail = $jQcl(document.activeElement).children()
                     .children().children().eq(0)[0];
                 if (view_enabled && Gmailr.filepickerLoaded){
                     e.preventDefault();
@@ -276,7 +276,7 @@ var UpdatedView = function () {
                             getBootstrapData("cloudy_signature");
                         if (signature_enabled === "true") {
                             // find "editable" div
-                            var email_textarea = $(currentEmail).parents(".I5")
+                            var email_textarea = $jQcl(currentEmail).parents(".I5")
                                 .find("div.editable");
                             if (composeMessages[currentMsg.id].addedSignature ||
                                     email_textarea.eq(0)
@@ -285,14 +285,14 @@ var UpdatedView = function () {
                                 return;
                             }
 
-                            var link = $("<div />").addClass(
+                            var link = $jQcl("<div />").addClass(
                                 "cloudy_share_link").html("<p>Sent with <a hr" +
                                 "ef='https://chrome.google.com/webstore/detai" +
                                 "l/cloudy/fcfnjfpcmnoabmbhponbioedjceaddaa' " +
                                 "target='_blank' >Cloudy for Gmail</a></p>");
 
-                            $("<br />").appendTo(email_textarea);
-                            $("<br />").appendTo(email_textarea);
+                            $jQcl("<br />").appendTo(email_textarea);
+                            $jQcl("<br />").appendTo(email_textarea);
                             link.appendTo(email_textarea);
                             composeMessages[currentMsg.id].addedSignature = 
                                 true;
@@ -371,17 +371,17 @@ var UpdatedView = function () {
             downloaddivUpdatedViewhtml = templates.updatedViewDownload;
 
             // erase data divs passed in DOM
-            $("#filepicker_customrow_template").remove();
-            $("#filepicker_customprogress_template").remove();
+            $jQcl("#filepicker_customrow_template").remove();
+            $jQcl("#filepicker_customprogress_template").remove();
              
             // add tmpparent div, used to add elements temporarily to the DOM
             var tmpParentHtml = 
-                $("<div id='tmpparent' style='display: none;'></div>");
-            tmpParentHtml.prependTo($(document.body));
+                $jQcl("<div id='tmpparent' style='display: none;'></div>");
+            tmpParentHtml.prependTo($jQcl(document.body));
 
             // initialize callbacks object, so the Controller can bind callbacks 
             // to the View.
-            view_callbacks = $.Callbacks();
+            view_callbacks = $jQcl.Callbacks();
 
             // Check for "Compose" mode every second.
             setInterval(function() {checkCompose()}, 500);
