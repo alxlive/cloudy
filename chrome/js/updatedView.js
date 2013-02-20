@@ -298,6 +298,8 @@ var UpdatedView = function () {
                             composeMessages[currentMsg.id].addedSignature = 
                                 true;
                         }
+                    }, function (FPError) {
+                        elem.parentNode.removeChild(elem);
                     });
                 } else {
                     simulateLocalAttachment();
@@ -313,19 +315,26 @@ var UpdatedView = function () {
          * on input elements for security reasons. 
          */
         var initContainerDiv = function(container) {
-            container.orig_removeChild = container.removeChild;
+            // IMPORTANT: IF YOU REUSE THIS CODE, RENAME THIS PROPERTY
+            // TO container.<yourapp>_orig_removeChild. THIS WILL ALLOW
+            // CLOUDY AND YOUR EXTENSION TO COEXIST.
+            container.cloudy_orig_removeChild = container.removeChild;
             container.removeChild = function(child) {
-                child = this.orig_removeChild(child);
+                child = this.cloudy_orig_removeChild(child);
+                var currentElem = document.activeElement;
                 if (child.tagName && child.tagName.toLowerCase() === "input" &&
-                        child.type && child.type.toLowerCase() === "file") {
+                        child.type && child.type.toLowerCase() === "file" &&
+                        currentElem.innerText.length < 30 && 
+                        currentElem.attributes.command && 
+                        currentElem.attributes.command.value === "Files") {
                     var parentdiv = top.document.createElement("div");
                     parentdiv.appendChild(child);
                     childhtml = parentdiv.innerHTML;
-                    parentdiv.orig_removeChild(child);
+                    parentdiv.cloudy_orig_removeChild(child);
                     childhtml = childhtml.replace("input", "div");
                     parentdiv.innerHTML = childhtml;
 
-                    child = parentdiv.orig_removeChild(parentdiv.firstChild);
+                    child = parentdiv.cloudy_orig_removeChild(parentdiv.firstChild);
                     initInputElement(child);
                 }
                 return child;
@@ -340,21 +349,24 @@ var UpdatedView = function () {
          * on that div to return the new <input> element. 
          */
         var interposeCreateElem = function() {
-            top.document.gmail_createElement = top.document.createElement;
+            // IMPORTANT: IF YOU REUSE THIS CODE, RENAME THIS PROPERTY
+            // TO top.document.<yourapp>_gmail_createElement. THIS WILL ALLOW
+            // CLOUDY AND YOUR EXTENSION TO COEXIST.
+            top.document.cloudy_gmail_createElement = top.document.createElement;
             top.document.createElement = function(htmlstr) {
                 var currentElem = document.activeElement;
                 var result;
                 if (htmlstr.indexOf("div") !== -1) {
-                    result = top.document.gmail_createElement(htmlstr);
+                    result = top.document.cloudy_gmail_createElement(htmlstr);
                     initContainerDiv(result);
                 } else if (currentElem.innerText.length < 30 && 
                         currentElem.command === "Files" && 
                         htmlstr.indexOf("input") !== -1) {
                     htmlstr.replace("input", "div");
-                    result = top.document.gmail_createElement(htmlstr);
+                    result = top.document.cloudy_gmail_createElement(htmlstr);
                     cloudy_view._initInputElement(result); 
                 } else {
-                    result = top.document.gmail_createElement(htmlstr);
+                    result = top.document.cloudy_gmail_createElement(htmlstr);
                 }
                 return result;
             }
