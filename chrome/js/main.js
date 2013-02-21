@@ -14,7 +14,8 @@ Gmailr.init(function(G) {
     script.type= 'text/javascript';
     script.src= '//api.filepicker.io/v1/filepicker.js';
     script.onload = function(){
-        filepicker.setKey("A8V-fpBbbR9aKC79dy3Vbz");
+        // filepicker.setKey("A8V-fpBbbR9aKC79dy3Vbz");
+        filepicker.setKey("AAOYcsKYQlGPHU98KlF2qz");
     	G.filepickerLoaded = true;
     };
     head.appendChild(script);
