@@ -1,7 +1,7 @@
 // Save this script as `options.js`
 
-$(document).ready(function() {
-
+//$(document).ready(function() {
+window.onload = function () {
     var storage = chrome.storage.sync;
     var signature_box = document.getElementById("cloudy_signature");
 
@@ -137,7 +137,7 @@ $(document).ready(function() {
     // Doing it onload because I am reassigning the base of the page,
     // so some elements relying on being fetched through 
     // chrome-extension:// might not load if we do this too early.
-    window.onload = function () {
+    //window.onload = function () {
         // Social buttons
         // Load Tweet button
         (!function(d,s,id) {
@@ -177,5 +177,6 @@ $(document).ready(function() {
             js.async = true;
             fjs.parentNode.insertBefore(js, fjs);
         } (document, 'script', 'pinterest-jssdk'));
-    }
-});
+    //}
+//});
+};
