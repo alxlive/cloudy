@@ -1,7 +1,8 @@
 body {
     padding-bottom: 40px;
     width: 440px !important;
-    background-color: #bbbbbb;
+    background-color: #cccccc;
+    background-image: url("../images/nasty_fabric.png");
 }
 
 h2 {
@@ -15,8 +16,34 @@ h2 {
     margin: 20px 0px 0px 0px;
 }
 
+#social-sharing {
+    display: table;
+    margin: 10px auto;
+            
+    /* Use this when it has a stable
+     * implementation: 
+    margin: 10px 0;
+    display: -webkit-box;
+    -webkit-box-pack: center;
+    -webkit-box-align: center; */
+}
+
+.social-button {
+    display: block;
+    float: left;
+}
+
+hr {
+    margin: 0px 0px 20px 0px;
+}
+
 #save {
     margin-right: 10px;
+    margin-bottom: 20px;
+}
+
+#author {
+    color: rgb(0, 61, 218);
 }
 
 #status {

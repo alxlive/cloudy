@@ -10,9 +10,9 @@
     "default_title": "Cloudy for Gmail",
     "default_popup": "popup.html"
   },
-  "icons": { "16": "icon16.png",
-             "48": "icon48.png",
-            "128": "icon128.png" }, 
+  "icons": { "16": "cloudIconOn_16.png",
+             "48": "main_icon_extrathick_extradark48.png",
+            "128": "main_icon_extrathick_extradark128.png" }, 
   "content_scripts": [
     {
       "matches": ["https://mail.google.com/*", "http://mail.google.com/*"],
@@ -27,6 +27,7 @@
     "https://mail.google.com/",
     "storage"
   ],
+  "content_security_policy": "script-src 'self' https://platform.twitter.com https://apis.google.com https://assets.pinterest.com https://partners-api.pinterest.com; object-src 'self'",
   "manifest_version" : 2,
   "web_accessible_resources" : [ 
     "js/constants.js", 
@@ -56,6 +57,7 @@
     "images/cloudyicon_thick_cropped_dark.png",
     "images/cloudIconOn52_white.png",
     "images/cloudy_popup_icon1.png",
+    "images/nasty_fabric.png",
     "templates/downloaddiv.html", 
     "templates/customrow.html", 
     "css/main.css",
