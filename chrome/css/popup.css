@@ -18,7 +18,8 @@ h2 {
 
 #social-sharing {
     display: table;
-    margin: 10px auto;
+    margin: 0px auto 10px;
+    padding-top: 40px;
             
     /* Use this when it has a stable
      * implementation: 
@@ -26,6 +27,11 @@ h2 {
     display: -webkit-box;
     -webkit-box-pack: center;
     -webkit-box-align: center; */
+}
+
+#social-sharing-container {
+    background: url(../images/cloudy_spreadtheword4.png) no-repeat;
+    background-size: 50%;
 }
 
 .social-button {
