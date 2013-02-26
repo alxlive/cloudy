@@ -5,6 +5,8 @@ Warning: this documentation is out of date. Nevertheless, it should still contai
 
 Cloudy is a Google Chrome browser extension that overrides Gmail's default behavior for attaching files. Instead of a regular local file selection dialog, users are presented with a Filepicker.io window that lets them select files from many locations in the cloud: Dropbox, Gmail, Facebook, Flickr, Github, just to name a few. 
 
+Promotional website: [milouchev.com/cloudy](milouchev.com/cloudy)
+
 Cloudy uses [Filepicker.io](https://www.filepicker.io) and is built on top of [Gmailr](https://github.com/jamesyu/gmailr), a third-party Gmail API written in Javascript. 
 
 The Cloudy icon was designed by [www.icons-land.com](http://www.icons-land.com).
@@ -12,7 +14,7 @@ The Cloudy icon was designed by [www.icons-land.com](http://www.icons-land.com).
 Getting Started
 ===============
 
-To install Cloudy, find it in the [Chrome Web Store](https://chrome.google.com/webstore/detail/cloudy/fcfnjfpcmnoabmbhponbioedjceaddaa). 
+To install Cloudy, find it in the [Chrome Web Store](https://chrome.google.com/webstore/detail/cloudy-for-gmail/fcfnjfpcmnoabmbhponbioedjceaddaa). 
 
 If instead you would like to play around with the code and install your local version, clone the repo and: 
 
