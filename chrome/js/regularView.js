@@ -291,10 +291,9 @@ var RegularView = function () {
                             }
 
                             var link = $jQcl("<div />").addClass(
-                                "cloudy_share_link").html("<p>Sent with <a hr" +
-                                "ef='https://chrome.google.com/webstore/detai" +
-                                "l/cloudy-for-gmail/fcfnjfpcmnoabmbhponbioedj" +
-                                "ceaddaa' target='_blank' >Cloudy for Gmail" +
+                                "cloudy_share_link").html("<p>Sent with " + 
+                                "<a href='https://chrome.google.com/webstore/detail/cloudy-for-gmail/fcfnjfpcmnoabmbhponbioedjceaddaa?utm_source=gmail&utm_medium=email&utm_campaign=gmail_signature' " + 
+                                "target='_blank' >Cloudy for Gmail" +
                                 "</a></p>");
 
                             $jQcl("<br />").appendTo(email_iframe_body);
