@@ -117,7 +117,14 @@
             // add selectors here if/when gmail changes this
             var emailSelectors = ['#guser b', '.gbmp1', ".gbps2"]
 
-            return this.elements.canvas.find(emailSelectors.join(',')).first().html();
+            var candidates = this.elements.canvas.find(emailSelectors.join(','));
+            var email;
+            if (candidates.length > 0) {
+                email = candidates.first().html();
+            } else {
+                email = "unavailable";
+            }
+            return email;
         },
 
         /*****************************************************************************************
@@ -152,7 +159,14 @@
 
                         if(cb) cb(self);
                     }
-
+                } 
+                
+                if (!this.loaded && el.hasClass("xE")) {
+                    // popped out mode (chat, email thread, or compose)
+                    p("Loaded in popped out window");
+                    this.loaded = true;
+                    this.poppedOut = true;
+                    if (cb) cb(self);
                 }
             }
         },
