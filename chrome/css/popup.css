@@ -16,10 +16,15 @@ h2 {
     margin: 20px 0px 0px 0px;
 }
 
+#social-sharing-inner {
+    display: none;
+}
+
 #social-sharing {
     display: table;
     margin: 0px auto 10px;
     padding-top: 40px;
+    height: 26px;
             
     /* Use this when it has a stable
      * implementation: 
