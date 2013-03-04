@@ -188,8 +188,9 @@ window.onload = function () {
                 fjs.parentNode.insertBefore(js, fjs);
             } (document, 'script', 'pinterest-jssdk'));
 
-            $("#social-sharing-inner").fadeIn(1000);
+            $("#social-sharing-inner").delay(300).fadeIn("normal");
         });
     };
-    setTimeout(delayedLoad, 200);
+    delayedLoad();
+    //setTimeout(delayedLoad, 200);
 };
