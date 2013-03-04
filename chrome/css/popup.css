@@ -1,6 +1,7 @@
 body {
     padding-bottom: 40px;
     width: 440px !important;
+    max-width: 440px;
     background-color: #cccccc;
     background-image: url("../images/nasty_fabric.png");
 }

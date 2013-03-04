@@ -101,7 +101,6 @@ $(document).ready(function() {
     storage = chrome.storage.sync;
     signature_box = document.getElementById("cloudy_signature");
 
-    // document.addEventListener('DOMContentLoaded', restore_options)
     restore_options();
 
     // Initialize sortable
@@ -189,7 +188,7 @@ window.onload = function () {
                 fjs.parentNode.insertBefore(js, fjs);
             } (document, 'script', 'pinterest-jssdk'));
 
-            $("#social-sharing-inner").fadeIn(1000);//.css('display', 'table');
+            $("#social-sharing-inner").fadeIn(1000);
         });
     };
     setTimeout(delayedLoad, 200);
