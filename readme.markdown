@@ -11,6 +11,8 @@ Cloudy uses [Filepicker.io](https://www.filepicker.io) and is built on top of [G
 
 The Cloudy icon was designed by [www.icons-land.com](http://www.icons-land.com).
 
+Note: Cloudy is NOT affiliated in any way with Google or Gmail.
+
 Getting Started
 ===============
 
@@ -73,6 +75,4 @@ TODOs
 
 3. Add possibility to download files to the cloud.
 
-4. Style the dialog to be prettier, place Cloudy icon instead of "Filepicker.io".
-
-5. Add failure detection in case Gmail code changes and breaks Cloudy.
+4. Add failure detection in case Gmail code changes and breaks Cloudy.
