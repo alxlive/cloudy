@@ -9,8 +9,6 @@ Promotional website: [milouchev.com/cloudy](http://milouchev.com/cloudy)
 
 Cloudy uses [Filepicker.io](https://www.filepicker.io) and is built on top of [Gmailr](https://github.com/jamesyu/gmailr), a third-party Gmail API written in Javascript. 
 
-The Cloudy icon was designed by [www.icons-land.com](http://www.icons-land.com).
-
 Note: Cloudy is NOT affiliated in any way with Google or Gmail.
 
 Getting Started
