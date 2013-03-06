@@ -1,10 +1,10 @@
 var addService = function (serviceName, serviceKeyword) {
-    console.log("2");
     var storage = chrome.storage.sync;
     storage.get("services", function(items) {
         if (typeof items.services === "undefined") {
-            console.log("3");
             // no preferences saved, do nothing
+            console.log("No preferences saved, " + serviceName + 
+                " is automatically added in default popup html.");
         } else if (typeof items.services.updates === "undefined" ||
                 items.services.updates[serviceName] !== "supported"){
             console.log("Adding service " + serviceName);
@@ -28,9 +28,10 @@ var addService = function (serviceName, serviceKeyword) {
 var onInit = function (details) {
     console.log("ON_INIT");
     if (details.reason === "update") {
-        console.log("1");
+        console.log("Cloudy was updated");
         if (details.previousVersion < "0.6.0.0") {
             // version 0.6.0.0 adds SkyDrive support
+            console.log("Version 0.6.0.0 adds SkyDrive support");
             addService("SkyDrive", "SKYDRIVE");
         }
     }
