@@ -43,9 +43,66 @@ var ViewManager = function () {
             }
         }
 
+        var loadSocialButtons = function() {
+            // Load Tweet button
+            (!function(d,s,id) {
+                console.log("loading twitter");
+                var js,fjs=d.getElementsByTagName(s)[0];
+                if(!d.getElementById(id)) {
+                    js=d.createElement(s);
+                    js.id=id; 
+                    js.async = true;
+                    js.src="https://platform.twitter.com/widgets.js";
+                    fjs.parentNode.insertBefore(js,fjs);
+                }
+            } (document,"script","twitter-wjs"));
+
+            // Load Google +1 button
+            (function(d, s, id) {
+                console.log("loading G+");
+                var po = d.createElement(s); 
+                if (d.getElementById(id)) return;
+                po.type = 'text/javascript'; 
+                po.async = true;
+                po.src = 'https://apis.google.com/js/plusone.js';
+                var s = d.getElementsByTagName('script')[0]; 
+                s.parentNode.insertBefore(po, s);
+            })(document, 'script', 'googleplus-jssdk');
+
+            // Load Pinterest "Pin it" button
+            (function(d, s, id) {
+                console.log("loading Pinterest");
+                var js, fjs = d.getElementsByTagName(s)[0];
+                if (d.getElementById(id)) return;
+                js = d.createElement(s); 
+                js.id = id;
+                js.src = "https://assets.pinterest.com/js/pinit.js";
+                js.async = true;
+                fjs.parentNode.insertBefore(js, fjs);
+            } (document, 'script', 'pinterest-jssdk'));
+        }
+
         var init = function() {
             mytimer = setInterval(checkCompose, 500);
             enabled = true;
+
+            // check for promo bubble, display it if loaded
+            var promobubble = document.getElementById("cloudy_bubble");
+            if (promobubble) {
+                console.log("Showing notification");
+
+                if ($jQcl(promobubble).hasClass("cloudy_social")) {
+                    loadSocialButtons();
+                }
+                //$jQcl(promobubble).show(); /* why does this not work? */
+                promobubble.style.display = "block";
+                $jQcl(promobubble).fadeTo(1000, 1);
+                $jQcl("#cloudy_bubble_close").click(function(){
+                    $jQcl(promobubble).fadeTo(1000, 0, function(){
+                        promobubble.parentNode.removeChild(promobubble);
+                    });
+                });
+            }
         }
 
         init.call(this);

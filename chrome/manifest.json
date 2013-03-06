@@ -66,6 +66,7 @@
     "templates/downloaddiv.html", 
     "templates/customrow.html", 
     "templates/popup-social.html", 
+    "templates/promo-bubble.html", 
     "css/main.css",
     "css/popup.css",
     "css/bootstrap-responsive.min.css",
