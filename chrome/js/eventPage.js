@@ -26,7 +26,7 @@ var addService = function (serviceName, serviceKeyword) {
 var onInit = function (details) {
     console.log("ON_INIT");
     if (details.reason === "update") {
-        if (details.previousVersion <= "0.6.0.0") {
+        if (details.previousVersion < "0.6.0.0") {
             // version 0.6.0.0 adds SkyDrive support
             addService("SkyDrive", "SKYDRIVE");
         }
