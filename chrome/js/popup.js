@@ -9,7 +9,7 @@ function save_options() {
     var list = document.getElementById("enabled_services").children;
     for (var i = 0; i < list.length; i++) {
         var elem = {};
-        elem.name = list[i].innerHTML;
+        elem.name = list[i].innerText;
         elem.keyword = list[i].getAttribute("data-name");
         services.enabled.push(elem);
     }
@@ -17,7 +17,7 @@ function save_options() {
     var list = document.getElementById("disabled_services").children;
     for (var i = 0; i < list.length; i++) {
         var elem = {};
-        elem.name = list[i].innerHTML;
+        elem.name = list[i].innerText;
         elem.keyword = list[i].getAttribute("data-name");
         services.disabled.push(elem);
     }
