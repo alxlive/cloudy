@@ -130,19 +130,23 @@ if(top.document == document) {
 
 
     storage.get("notification", function(items) {
+        console.log("here");
         var notification = items.notification;
         if (typeof items.notification !== "undefined" && 
             !notification.done) {
-            // inject promo bubble
-            var promo_injected = false;
+            // inject notification bubble
+            console.log("here2");
+            var bubble_injected = false;
             var xhr = new XMLHttpRequest();
             xhr.onreadystatechange = function() {
-                if (xhr.readyState==4 && xhr.status==200 && !promo_injected) {
+                console.log("here3");
+                if (xhr.readyState==4 && xhr.status==200 && !bubble_injected) {
+                    console.log("here4");
                     console.log("injecting notification bubble");
                     var container = document.createElement("div");
                     container.innerHTML = xhr.responseText;
                     document.body.appendChild(container);
-                    promo_inject = true;
+                    bubble_injected = true;
                 }
             };
             xhr.open("GET", 
@@ -152,5 +156,6 @@ if(top.document == document) {
             notification.done = true;
             storage.set({"notification": notification});
         }
+        console.log("here5");
     });
 };
