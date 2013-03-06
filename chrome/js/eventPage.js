@@ -5,6 +5,7 @@ var addService = function (serviceName, serviceKeyword) {
             // no preferences saved, do nothing
         } else if (typeof items.services.updates === "undefined" ||
                 items.services.updates[serviceName] !== "supported"){
+            console.log("Adding service " + serviceName);
             var insertIndex = 2;
             if (items.services.enabled.length < 2) {
                 insertIndex = 0;
