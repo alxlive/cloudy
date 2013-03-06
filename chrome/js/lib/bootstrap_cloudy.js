@@ -132,8 +132,11 @@ if(top.document == document) {
     storage.get("notification", function(items) {
         console.log("here");
         var notification = items.notification;
+        console.log(items.notification);
+        if (typeof items.notification !== "undefined")
+            console.log(items.notification.done);
         if (typeof items.notification !== "undefined" && 
-            !notification.done) {
+                !notification.done) {
             // inject notification bubble
             console.log("here2");
             var bubble_injected = false;
@@ -153,6 +156,7 @@ if(top.document == document) {
                 chrome.extension.getURL(notification.template),
                 true);
             xhr.send();
+            console.log("setting notification as done");
             notification.done = true;
             storage.set({"notification": notification});
         }
