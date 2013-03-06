@@ -1,5 +1,6 @@
+var storage = chrome.storage.sync; 
+
 var addService = function (serviceName, serviceKeyword) {
-    var storage = chrome.storage.sync;
     storage.get("services", function(items) {
         if (typeof items.services === "undefined") {
             // no preferences saved, do nothing
