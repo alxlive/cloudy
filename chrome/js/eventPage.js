@@ -33,6 +33,11 @@ var onInit = function (details) {
             // version 0.6.0.0 adds SkyDrive support
             console.log("Version 0.6.0.0 adds SkyDrive support");
             addService("SkyDrive", "SKYDRIVE");
+            var notification = {
+                done: false,
+                template: "templates/skydrive-bubble.html"
+            };
+            storage.set({"notification": notification});
         }
     }
 }

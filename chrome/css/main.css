@@ -96,7 +96,7 @@ div#cloudy_bubble_close {
     border: 0;
     -webkit-appearance: none;
     text-shadow: 0 1px 0 #ffffff;
-    line-height: 20px;
+    line-height: 0px;
 }
 
 div#cloudy_bubble_icon img {
@@ -107,7 +107,7 @@ div#cloudy_bubble_icon img {
     margin-right: 6%;
 }
 
-p#bubble-head-paragraph {
+#bubble_head_paragraph h4{
+    margin-bottom: 1em;
     margin-top: 0px;
-    margin-bottom: 0px;
 }

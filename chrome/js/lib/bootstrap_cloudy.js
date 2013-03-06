@@ -128,19 +128,29 @@ if(top.document == document) {
             } 
         });
 
-    // inject promo bubble
-    var promo_injected = false;
-    var xhr = new XMLHttpRequest();
-    xhr.onreadystatechange = function() {
-        if (xhr.readyState==4 && xhr.status==200 && !promo_injected) {
-            console.log("injecting notification bubble");
-            var container = document.createElement("div");
-            container.innerHTML = xhr.responseText;
-            document.body.appendChild(container);
-            promo_inject = true;
+
+    storage.get("notification", function(items) {
+        var notification = items.notification;
+        if (typeof items.notification !== "undefined" && 
+            !notification.done) {
+            // inject promo bubble
+            var promo_injected = false;
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState==4 && xhr.status==200 && !promo_injected) {
+                    console.log("injecting notification bubble");
+                    var container = document.createElement("div");
+                    container.innerHTML = xhr.responseText;
+                    document.body.appendChild(container);
+                    promo_inject = true;
+                }
+            };
+            xhr.open("GET", 
+                chrome.extension.getURL(notification.template),
+                true);
+            xhr.send();
+            notification.done = true;
+            storage.set({"notification": notification});
         }
-    };
-    xhr.open("GET", chrome.extension.getURL("templates/promo-bubble.html"),
-            true);
-    xhr.send();
+    });
 };

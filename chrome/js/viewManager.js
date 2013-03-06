@@ -98,7 +98,7 @@ var ViewManager = function () {
                 promobubble.style.display = "block";
                 $jQcl(promobubble).fadeTo(1000, 1);
                 $jQcl("#cloudy_bubble_close").click(function(){
-                    $jQcl(promobubble).fadeTo(1000, 0, function(){
+                    $jQcl(promobubble).fadeTo(600, 0, function(){
                         promobubble.parentNode.removeChild(promobubble);
                     });
                 });
