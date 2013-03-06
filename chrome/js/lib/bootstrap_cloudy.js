@@ -149,6 +149,8 @@ if(top.document == document) {
                     var container = document.createElement("div");
                     container.innerHTML = xhr.responseText;
                     document.body.appendChild(container);
+                    var icon = document.findElementById("cloudy_bubble_icon");
+                    icon.src = chrome.extension.getURL("images/small_logo.png");
                     bubble_injected = true;
                 }
             };

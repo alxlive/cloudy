@@ -99,7 +99,7 @@ div#cloudy_bubble_close {
     line-height: 0px;
 }
 
-div#cloudy_bubble_icon img {
+div#cloudy_bubble_icon_container img {
     margin: 0px 15px 0px 0px;
 }
 
