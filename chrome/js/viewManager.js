@@ -110,8 +110,9 @@ var ViewManager = function () {
                 });
                 $jQcl("#cloudy_bubble_close").click(function(){
                     $jQcl(notification_bubble).fadeTo(600, 0, function(){
-                        notification_bubble.parentNode.removeChild(
-                            notification_bubble);
+                        notification_bubble.hide();
+                        //notification_bubble.parentNode.removeChild(
+                        //    notification_bubble);
                     });
                 });
             }
