@@ -188,7 +188,7 @@ if(top.document == document) {
 
     var cloudy_events = document.createElement("div");
     cloudy_events.id = "cloudy_events";
-    document.appendChild(cloudy_events);
+    document.body.appendChild(cloudy_events);
 
     restorePersistentState();
 
