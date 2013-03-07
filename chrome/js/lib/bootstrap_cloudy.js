@@ -131,17 +131,21 @@ if(top.document == document) {
             }
         });
 
-        document.addEventListener("cloudy_notificationDisplayed", function(e) {
-            var from = e.target;
-            console.log("Cloudy UI event");
-            if (from && typeof currentNotification !== "undefined") {
-                var notification = {};
-                notification.template = currentNotification;
-                notification.done = true;
-                console.log("setting notification as done");
-                storage.set({"notification": notification});
-            }
-        });
+        var cloudy_events = document.getElementById("cloudy_events");
+        if (cloudy_events) {
+            cloudy_events.addEventListener("cloudy_notificationDisplayed", 
+                    function(e) {
+                var from = e.target;
+                console.log("Cloudy UI event");
+                if (from && typeof currentNotification !== "undefined") {
+                    var notification = {};
+                    notification.template = currentNotification;
+                    notification.done = true;
+                    console.log("setting notification as done");
+                    storage.set({"notification": notification});
+                }
+            });
+        }
     }
 
     // Pass data to inserted scripts via DOM elements
@@ -181,6 +185,10 @@ if(top.document == document) {
     loadScript(chrome.extension.getURL("js/lib/lab.js"), function() {
         loadScript(chrome.extension.getURL("js/lib/init.js"));
     });
+
+    var cloudy_events = document.createElement("div");
+    cloudy_events.id = "cloudy_events";
+    document.appendChild(cloudy_events);
 
     restorePersistentState();
 

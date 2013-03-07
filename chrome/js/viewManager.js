@@ -87,23 +87,31 @@ var ViewManager = function () {
             enabled = true;
 
             // check for promo bubble, display it if loaded
-            var promobubble = document.getElementById("cloudy_bubble");
-            if (promobubble) {
+            var notification_bubble = document.getElementById("cloudy_bubble");
+            if (notification_bubble) {
                 console.log("Showing notification");
 
-                if ($jQcl(promobubble).hasClass("cloudy_social")) {
+                if ($jQcl(notification_bubble).hasClass("cloudy_social")) {
                     loadSocialButtons();
                 }
-                //$jQcl(promobubble).show(); /* why does this not work? */
-                promobubble.style.display = "block";
-                $jQcl(promobubble).fadeTo(1000, 1, function() {
-                    var e = document.createEvent("Events");
-                    e.initEvent("cloudy_notificationDisplayed", false, true);
-                    document.dispatchEvent(e);
+                /* why does this not work? */
+                //$jQcl(notification_bubble).show(); 
+                notification_bubble.style.display = "block";
+                $jQcl(notification_bubble).delay(1500).fadeTo(1000, 1, 
+                        function() {
+                    var cloudy_events = 
+                        document.getElementById("cloudy_events");
+                    if (cloudy_events) {
+                        var e = document.createEvent("Events");
+                        e.initEvent("cloudy_notificationDisplayed", 
+                            false, true);
+                        cloudy_events.dispatchEvent(e);
+                    }
                 });
                 $jQcl("#cloudy_bubble_close").click(function(){
-                    $jQcl(promobubble).fadeTo(600, 0, function(){
-                        promobubble.parentNode.removeChild(promobubble);
+                    $jQcl(notification_bubble).fadeTo(600, 0, function(){
+                        notification_bubble.parentNode.removeChild(
+                            notification_bubble);
                     });
                 });
             }
