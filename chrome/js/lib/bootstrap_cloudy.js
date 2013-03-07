@@ -159,9 +159,6 @@ if(top.document == document) {
                 chrome.extension.getURL(notification.template),
                 true);
             xhr.send();
-            //console.log("setting notification as done");
-            //notification.done = true;
-            //storage.set({"notification": notification});
         }
         console.log("here5");
     });
