@@ -96,7 +96,11 @@ var ViewManager = function () {
                 }
                 //$jQcl(promobubble).show(); /* why does this not work? */
                 promobubble.style.display = "block";
-                $jQcl(promobubble).fadeTo(1000, 1);
+                $jQcl(promobubble).fadeTo(1000, 1, function() {
+                    var e = document.createEvent("Events");
+                    e.initEvent("cloudy_notificationDisplayed", false, true);
+                    document.dispatchEvent(e);
+                });
                 $jQcl("#cloudy_bubble_close").click(function(){
                     $jQcl(promobubble).fadeTo(600, 0, function(){
                         promobubble.parentNode.removeChild(promobubble);

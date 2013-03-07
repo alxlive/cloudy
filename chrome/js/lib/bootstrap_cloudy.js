@@ -128,7 +128,7 @@ if(top.document == document) {
             } 
         });
 
-
+    var currentNotification = undefined;
     storage.get("notification", function(items) {
         console.log("here");
         var notification = items.notification;
@@ -140,6 +140,7 @@ if(top.document == document) {
             // inject notification bubble
             console.log("here2");
             var bubble_injected = false;
+            currentNotification = items.notification.template;
             var xhr = new XMLHttpRequest();
             xhr.onreadystatechange = function() {
                 console.log("here3");
@@ -158,10 +159,22 @@ if(top.document == document) {
                 chrome.extension.getURL(notification.template),
                 true);
             xhr.send();
-            console.log("setting notification as done");
-            notification.done = true;
-            storage.set({"notification": notification});
+            //console.log("setting notification as done");
+            //notification.done = true;
+            //storage.set({"notification": notification});
         }
         console.log("here5");
+    });
+
+    document.addEventListener("cloudy_notificationDisplayed", function(e) {
+        var from = e.target;
+        console.log("received event");
+        if (from && typeof currentNotification !== "undefined") {
+            var notification = {};
+            notification.template = currentNotification;
+            notification.done = true;
+            console.log("setting notification as done");
+            storage.set({"notification": notification});
+        }
     });
 };
