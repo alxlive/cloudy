@@ -87,17 +87,17 @@ var ViewManager = function () {
             enabled = true;
 
             // check for promo bubble, display it if loaded
-            var notification_bubble = document.getElementById("cloudy_bubble");
-            if (notification_bubble) {
+            var notification_bubble = $jQcl("#cloudy_bubble");
+            if (notification_bubble && notification_bubble.length > 0) {
                 console.log("Showing notification");
 
-                if ($jQcl(notification_bubble).hasClass("cloudy_social")) {
+                if (notification_bubble.hasClass("cloudy_social")) {
                     loadSocialButtons();
                 }
                 /* why does this not work? */
-                //$jQcl(notification_bubble).show(); 
-                notification_bubble.style.display = "block";
-                $jQcl(notification_bubble).delay(1500).fadeTo(1000, 1, 
+                //notification_bubble.show(); 
+                notification_bubble.css("display", "block");
+                notification_bubble.delay(1500).fadeTo(1000, 1, 
                         function() {
                     var cloudy_events = 
                         document.getElementById("cloudy_events");
@@ -109,7 +109,7 @@ var ViewManager = function () {
                     }
                 });
                 $jQcl("#cloudy_bubble_close").click(function(){
-                    $jQcl(notification_bubble).fadeTo(600, 0, function(){
+                    notification_bubble.fadeTo(600, 0, function(){
                         notification_bubble.hide();
                         //notification_bubble.parentNode.removeChild(
                         //    notification_bubble);
