@@ -9,11 +9,12 @@ var addService = function (serviceName, serviceKeyword) {
         } else if (typeof items.services.updates === "undefined" ||
                 items.services.updates[serviceName] !== "supported"){
             console.log("Adding service " + serviceName);
+            // insert as third service by default (don't mess with people's
+            // top 2).
             var insertIndex = 2;
             if (items.services.enabled.length < 2) {
                 insertIndex = 0;
             }
-            // insert SkyDrive as the third enabled service
             items.services.enabled.splice(insertIndex, 0, {
                 keyword: serviceKeyword,
                 name: serviceName
