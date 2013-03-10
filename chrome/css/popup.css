@@ -69,6 +69,14 @@ hr {
     margin-bottom: 0px;
 }
 
+#enable {
+    color: rgb(0, 112, 17);
+}
+
+#disable {
+    color: rgb(216, 18, 18);
+}
+
 .sidebar-nav {
     padding: 9px 0;
 }
