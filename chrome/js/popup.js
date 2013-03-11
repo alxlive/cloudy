@@ -80,8 +80,9 @@ function restore_options() {
                     items.services.disabled[i].name);
                 li.appendTo(disabled_parent);
             }
-            $('.sortable').sortable();
-            $('.connected').sortable({
+            // lists changed, so re-create sortable
+            $('.sortable.connected').sortable("destroy");
+            $('.sortable.connected').sortable({
                 connectWith: '.connected'
             });
         }
@@ -101,13 +102,12 @@ $(document).ready(function() {
     storage = chrome.storage.sync;
     signature_box = document.getElementById("cloudy_signature");
 
-    restore_options();
-
     // Initialize sortable
-    $('.sortable').sortable();
-    $('.connected').sortable({
+    $('.sortable.connected').sortable({
         connectWith: '.connected'
     });
+
+    restore_options();
 
     // TODO: remove explicit saving, save as users choose their settings
     $("#save").click(function(e) {
