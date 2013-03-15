@@ -143,6 +143,7 @@ var UpdatedView = function () {
          * icon.
          */
         var checkCompose = function() {
+            // #selector
             var tofields = $jQcl(document.getElementsByName('subject'));
             var foundUninitialized = false;
             for (var i = 0; i < tofields.length; i++) {
@@ -153,6 +154,7 @@ var UpdatedView = function () {
             }
             if (foundUninitialized) {
                 console.log("setting Cloudy icons");
+                // #selector
                 var attachmentIcons = 
                     $jQcl("[command=Files]").children().children()
                      .children();
@@ -276,6 +278,7 @@ var UpdatedView = function () {
                             getBootstrapData("cloudy_signature");
                         if (signature_enabled === "true") {
                             // find "editable" div
+                            // #selector
                             var email_textarea = $jQcl(currentEmail).parents(".I5")
                                 .find("div.editable");
                             if (composeMessages[currentMsg.id].addedSignature ||

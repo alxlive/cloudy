@@ -115,6 +115,7 @@
             if(!this.loaded) throw "Call to emailAddress before Gmail has loaded";
 
             // add selectors here if/when gmail changes this
+            // #selector
             var emailSelectors = ['#guser b', '.gbmp1', ".gbps2"]
 
             var candidates = this.elements.canvas.find(emailSelectors.join(','));
@@ -146,12 +147,14 @@
                 // get handle on the left menu
                 if(!this.leftMenu || this.leftMenu.length == 0 || 
                     !this.inboxLink || this.inboxLink.length == 0) {
+                    // #selector
                     this.leftMenu = el.find('div.nH.oy8Mbf.nn.aeN');
 
                     this.inboxLink = this.leftMenu.find("a.J-Ke.n0").eq(0);
 
                     if(this.leftMenu && this.leftMenu.length > 0 &&
                         this.inboxLink && this.inboxLink.length > 0) {
+                        // #selector
                         this.leftMenuItems = this.leftMenu.find('.TO');
 
                         p('Fully loaded');

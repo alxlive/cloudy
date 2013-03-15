@@ -27,6 +27,7 @@ var ViewManager = function () {
          * Otherwise, we're dealing with the old one. 
          */
         var checkCompose = function() {
+            // #selector
             if (enabled && document.getElementsByName("subject").length) {
                 if (!document.getElementsByClassName("I5").length) {
                     // Gmail's old interface

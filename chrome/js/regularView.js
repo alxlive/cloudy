@@ -132,8 +132,10 @@ var RegularView = function () {
          * progress information to the user for each file upload.
          */
         var checkCompose = function() {
+            // #selector
             if (document.getElementsByName("to").length) {
                 if ($jQcl("span.cloudy_icon_container")[0] === undefined) {
+                    // #selector
                     var subjectrow = $jQcl($jQcl("div[role=main]").find("input")
                         .filter("[name=subject]").parents("tr")[0]);
                     rows[0] = subjectrow.prev();
@@ -280,6 +282,7 @@ var RegularView = function () {
                             getBootstrapData("cloudy_signature");
                         if (signature_enabled === "true") {
                             // find "editable" iframe
+                            // #selector
                             var email_iframe = $jQcl("iframe.editable");
                             var email_iframe_body = 
                                 $jQcl(email_iframe[0].contentWindow.document.body);
