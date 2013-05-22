@@ -83,9 +83,6 @@ var ViewManager = function () {
         }
 
         var init = function() {
-            mytimer = setInterval(checkCompose, 500);
-            enabled = true;
-
             // check for promo bubble, display it if loaded
             var notification_bubble = $jQcl("#cloudy_bubble");
             if (notification_bubble && notification_bubble.length > 0) {
@@ -116,6 +113,11 @@ var ViewManager = function () {
                     });
                 });
             }
+            return;
+
+            // start timer
+            mytimer = setInterval(checkCompose, 500);
+            enabled = true;
         }
 
         init.call(this);

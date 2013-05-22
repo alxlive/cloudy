@@ -31,16 +31,22 @@ var onInit = function (details) {
     console.log("ON_INIT");
     if (details.reason === "update") {
         console.log("Cloudy was updated");
-        if (details.previousVersion < "0.6.0.0") {
-            // version 0.6.0.0 adds SkyDrive support
-            console.log("Version 0.6.0.0 adds SkyDrive support");
-            addService("SkyDrive", "SKYDRIVE");
+        if (details.previousVersion < "0.6.0.5") {
+            console.log("Version 0.6.0.5 disables Cloudy due to Gmail changes");
             var notification = {
                 done: false,
-                template: "templates/skydrive-bubble.html"
+                template: "templates/gmail-incompatibility.html"
             };
             storage.set({"notification": notification});
         }
+    }
+    else if (details.reason === "install") {
+        console.log("Version 0.6.0.5 disables Cloudy due to Gmail changes");
+        var notification = {
+            done: false,
+            template: "templates/gmail-incompatibility.html"
+        };
+        storage.set({"notification": notification});
     }
 }
 
