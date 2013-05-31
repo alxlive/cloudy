@@ -69,6 +69,14 @@ hr {
     margin-bottom: 0px;
 }
 
+#enable {
+    color: rgb(0, 112, 17);
+}
+
+#disable {
+    color: rgb(216, 18, 18);
+}
+
 .sidebar-nav {
     padding: 9px 0;
 }
@@ -81,7 +89,8 @@ hr {
     color: #1C94C4;
     margin: 5px;
     padding: 5px;
-    height: 22px;
+    height: 15px;
+    line-height: 13px;
     cursor: pointer;
 }
 

@@ -8,6 +8,10 @@
     position: relative;
 }
 
+.pull-left {
+    float: left;
+}
+
 .cloudy_invisible {
     display: none !important;
 }
@@ -56,4 +60,55 @@
 
 .cloudy_updatedview_download_msg {
     color: lightCoral;
+}
+
+div#cloudy_bubble {
+    width: 30%; 
+    min-width: 385px;
+    max-width: 500px;
+    position: fixed; 
+    background-color: white; 
+    top: 10px; 
+    z-index: 10; 
+    right: 1%; 
+    padding: 20px; 
+    border-top-left-radius: 20px; 
+    border-top-right-radius: 20px; 
+    border-bottom-right-radius: 20px; 
+    border-bottom-left-radius: 20px; 
+    font-family: 'helvetica neue'; 
+    border: 3px solid black; 
+    color: rgb(220, 20, 60);
+    color: black;
+    text-shadow: lightgrey 0px 1px 1px;
+    text-shadow: #eeeeee 0px 1px 1px;
+    display: none;
+    opacity: 0;
+}
+
+div#cloudy_bubble_close {
+    float: right;
+    cursor: pointer;
+    background: transparent;
+    opacity: 0.2;
+    font-size: 23px;
+    font-weight: bold;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    border: 0;
+    -webkit-appearance: none;
+    text-shadow: 0 1px 0 #ffffff;
+    line-height: 0px;
+}
+
+div#cloudy_bubble_icon_container img {
+    margin: 0px 15px 0px 0px;
+}
+
+.bubble-text-container {
+    margin-right: 6%;
+}
+
+#bubble_head_paragraph h4{
+    margin-bottom: 1em;
+    margin-top: 0px;
 }

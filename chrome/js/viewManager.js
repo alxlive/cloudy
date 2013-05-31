@@ -44,7 +44,78 @@ var ViewManager = function () {
             }
         }
 
+        var loadSocialButtons = function() {
+            // Load Tweet button
+            (!function(d,s,id) {
+                console.log("loading twitter");
+                var js,fjs=d.getElementsByTagName(s)[0];
+                if(!d.getElementById(id)) {
+                    js=d.createElement(s);
+                    js.id=id; 
+                    js.async = true;
+                    js.src="https://platform.twitter.com/widgets.js";
+                    fjs.parentNode.insertBefore(js,fjs);
+                }
+            } (document,"script","twitter-wjs"));
+
+            // Load Google +1 button
+            (function(d, s, id) {
+                console.log("loading G+");
+                var po = d.createElement(s); 
+                if (d.getElementById(id)) return;
+                po.type = 'text/javascript'; 
+                po.async = true;
+                po.src = 'https://apis.google.com/js/plusone.js';
+                var s = d.getElementsByTagName('script')[0]; 
+                s.parentNode.insertBefore(po, s);
+            })(document, 'script', 'googleplus-jssdk');
+
+            // Load Pinterest "Pin it" button
+            (function(d, s, id) {
+                console.log("loading Pinterest");
+                var js, fjs = d.getElementsByTagName(s)[0];
+                if (d.getElementById(id)) return;
+                js = d.createElement(s); 
+                js.id = id;
+                js.src = "https://assets.pinterest.com/js/pinit.js";
+                js.async = true;
+                fjs.parentNode.insertBefore(js, fjs);
+            } (document, 'script', 'pinterest-jssdk'));
+        }
+
         var init = function() {
+            // check for promo bubble, display it if loaded
+            var notification_bubble = $jQcl("#cloudy_bubble");
+            if (notification_bubble && notification_bubble.length > 0) {
+                console.log("Showing notification");
+
+                if (notification_bubble.hasClass("cloudy_social")) {
+                    loadSocialButtons();
+                }
+                /* why does this not work? */
+                //notification_bubble.show(); 
+                notification_bubble.css("display", "block");
+                notification_bubble.delay(1500).fadeTo(1000, 1, 
+                        function() {
+                    var cloudy_events = 
+                        document.getElementById("cloudy_events");
+                    if (cloudy_events) {
+                        var e = document.createEvent("Events");
+                        e.initEvent("cloudy_notificationDisplayed", 
+                            false, true);
+                        cloudy_events.dispatchEvent(e);
+                    }
+                });
+                $jQcl("#cloudy_bubble_close").click(function(){
+                    notification_bubble.fadeTo(600, 0, function(){
+                        notification_bubble.hide();
+                        //notification_bubble.parentNode.removeChild(
+                        //    notification_bubble);
+                    });
+                });
+            }
+
+            // start timer
             mytimer = setInterval(checkCompose, 500);
             enabled = true;
         }

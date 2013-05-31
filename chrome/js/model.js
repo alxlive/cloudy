@@ -89,6 +89,8 @@ FileHandler.prototype.fileProcessed = function(data) {
     var ab = data.ab; 
 
     var blob = new Blob([new Uint8Array(ab)], {type: this.fpfile.mimetype});
+    console.log(this.fpfile.mimetype);
+    console.log(this.fpfile.filename);
 
     // extend our Blobs to have all properties of a file
     blob.lastModifiedDate = Date();

@@ -70,7 +70,10 @@ var UpdatedView = function () {
                 view_enabled = false;
                 return;
             } 
-            inputElem.files = filesArray;
+            inputElem.__defineGetter__("files", function(){
+                return filesArray;
+            });
+
             if (!inputElem.parentNode) {
                 // Gmail removes the <input type="file"> element upon detecting 
                 // that the user chose a file. If already removed because of 
@@ -374,6 +377,27 @@ var UpdatedView = function () {
             }
         }
 
+        /* Override the default appendChild method to intercept appending
+         * of the <input type='file'> element we need to catch in order
+         * to modify the default behavior.
+         */ 
+        var interposeAppendChild = function() {
+            var body = top.document.body;
+            body.cloudy_gmail_appendChild = body.appendChild;
+            body.appendChild = function(child) {
+                var currentElem = document.activeElement;
+                if (child.tagName && child.tagName.toLowerCase() === "input" &&
+                        child.type && child.type.toLowerCase() === "file" &&
+                        currentElem.innerText.length < 30 &&
+                        currentElem.attributes.command &&
+                        currentElem.attributes.command.value === "Files") {
+                    initInputElement(child);
+                } 
+                this.cloudy_gmail_appendChild(child);
+                return child;
+            }
+        }
+
         var init = function() {
             // get templates from DOM
             var templates = Templates();
@@ -404,6 +428,7 @@ var UpdatedView = function () {
             // interpose on key document functions to catch when the user is
             // attaching a file
             interposeCreateElem();
+            interposeAppendChild();
 
             // set View as enabled. Marking this as false effectively disables 
             // the entire extension, as it will no longer receive any inputs.

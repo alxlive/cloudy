@@ -11,7 +11,7 @@
 // Only run this script in the top-most frame (there are multiple frames in 
 // Gmail)
 if(top.document == document) {
-    
+
     // Adds a data DOM element that simply holds a string in an attribute, to 
     // be read by the injected scripts.
     var addData = function(id, val) {
@@ -27,7 +27,7 @@ if(top.document == document) {
         div.setAttribute('data-val', val);
         div.setAttribute('style', "display:none");
     }
-    
+
     // Loads a script
     var loadScript = function(path, onloadhandler) {
         var headID = document.getElementsByTagName("head")[0];
@@ -48,7 +48,106 @@ if(top.document == document) {
         }
         return enabled.length ? enabled : undefined;
     }
-    
+
+    var restorePersistentState = function() {
+        // Load data from persistent storage
+        var storage = chrome.storage.sync;
+        storage.get("signature", function(items){
+            var signature = items.signature;
+            if (typeof items.signature === "undefined") {
+                storage.set({"signature": true});
+                signature = true;
+            }
+            addData("cloudy_signature", signature);
+        });
+        storage.get("services", function(items){
+            addData("cloudy_services", JSON.stringify(getEnabledFPServices(
+                items.services)));
+        });
+        storage.get("multifile", function(items) {
+            var multifile = items.multifile;
+            if (typeof items.multifile === "undefined") {
+                storage.set({"multifile": "multiple"});
+                multifile = "multiple";
+            }
+            addData("cloudy_multifile", multifile);
+        });
+        chrome.storage.onChanged.addListener(
+            function (changes, areaName){
+                console.log("areaname is " + areaName)
+                if (areaName === "sync") {
+                    // Cloudy does not use "local" storage
+                    for (var key in changes) {
+                        if (key === "signature") {
+                            console.log("change in cloudy_signature");
+                            setData("cloudy_signature", 
+                                changes.signature.newValue);
+                        } else if (key === "multifile") {
+                            console.log("change in cloudy_multifile");
+                            setData("cloudy_multifile", 
+                                changes.multifile.newValue);
+                        } else if (key === "services") {
+                            console.log("change in cloudy_services");
+                            setData("cloudy_services", JSON.stringify(
+                                getEnabledFPServices(
+                                    changes.services.newValue)));
+                        }
+                    }
+                } 
+            });
+    }
+
+    var injectNotifications = function() {
+        var currentNotification = undefined;
+        var storage = chrome.storage.sync;
+        storage.get("notification", function(items) {
+            var notification = items.notification;
+            if (typeof items.notification !== "undefined" && 
+                    !notification.done) {
+                // inject notification bubble
+                var bubble_injected = false;
+                currentNotification = items.notification.template;
+                var xhr = new XMLHttpRequest();
+                xhr.onreadystatechange = function() {
+                    if (xhr.readyState==4 && xhr.status==200 && 
+                            !bubble_injected) {
+                        console.log("adding notification bubble");
+                        var container = document.createElement("div");
+                        container.innerHTML = xhr.responseText;
+                        document.body.appendChild(container);
+                        var icon = 
+                            document.getElementById("cloudy_bubble_icon");
+                        if (icon) {
+                            icon.src = chrome.extension.getURL(
+                                "images/small_logo.png");
+                        }
+                        bubble_injected = true;
+                    }
+                };
+                xhr.open("GET", 
+                    chrome.extension.getURL(notification.template),
+                    true);
+                xhr.send();
+            }
+        });
+
+        var cloudy_events = document.getElementById("cloudy_events");
+        if (cloudy_events) {
+            cloudy_events.addEventListener("cloudy_notificationDisplayed", 
+                    function(e) {
+                var from = e.target;
+                console.log("Cloudy UI event");
+                if (from && typeof currentNotification !== "undefined") {
+                    var notification = {};
+                    notification.template = currentNotification;
+                    notification.done = true;
+                    console.log("setting notification as done");
+                    storage.set({"notification": notification});
+                }
+            });
+        }
+    }
+
     // Pass data to inserted scripts via DOM elements
     addData("css_path",        chrome.extension.getURL("css/main.css"));
     addData("jquery_path",     
@@ -86,45 +185,12 @@ if(top.document == document) {
     loadScript(chrome.extension.getURL("js/lib/lab.js"), function() {
         loadScript(chrome.extension.getURL("js/lib/init.js"));
     });
-    var storage = chrome.storage.sync;
-    storage.get("signature", function(items){
-        var signature = items.signature;
-        if (typeof items.signature === "undefined") {
-            storage.set({"signature": true});
-            signature = true;
-        }
-        addData("cloudy_signature", signature);
-    });
-    storage.get("services", function(items){
-        addData("cloudy_services", JSON.stringify(getEnabledFPServices(
-            items.services)));
-    });
-    storage.get("multifile", function(items) {
-        var multifile = items.multifile;
-        if (typeof items.multifile === "undefined") {
-            storage.set({"multifile": "multiple"});
-            multifile = "multiple";
-        }
-        addData("cloudy_multifile", multifile);
-    });
-    chrome.storage.onChanged.addListener(
-        function (changes, areaName){
-            console.log("areaname is " + areaName)
-            if (areaName === "sync") {
-                // Cloudy does not use "local" storage
-                for (var key in changes) {
-                    if (key === "signature") {
-                        console.log("change in cloudy_signature");
-                        setData("cloudy_signature", changes.signature.newValue);
-                    } else if (key === "multifile") {
-                        console.log("change in cloudy_multifile");
-                        setData("cloudy_multifile", changes.multifile.newValue);
-                    } else if (key === "services") {
-                        console.log("change in cloudy_services");
-                        setData("cloudy_services", JSON.stringify(
-                            getEnabledFPServices(changes.services.newValue)));
-                    }
-                }
-            } 
-        });
+
+    var cloudy_events = document.createElement("div");
+    cloudy_events.id = "cloudy_events";
+    document.body.appendChild(cloudy_events);
+
+    restorePersistentState();
+
+    injectNotifications();
 };
