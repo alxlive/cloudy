@@ -113,7 +113,6 @@ var ViewManager = function () {
                     });
                 });
             }
-            return;
 
             // start timer
             mytimer = setInterval(checkCompose, 500);

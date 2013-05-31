@@ -31,22 +31,17 @@ var onInit = function (details) {
     console.log("ON_INIT");
     if (details.reason === "update") {
         console.log("Cloudy was updated");
-        if (details.previousVersion < "0.6.0.5") {
-            console.log("Version 0.6.0.5 disables Cloudy due to Gmail changes");
+        if (details.previousVersion < "0.6.0.6") {
+            console.log("Version 0.6.0.6 reenables Cloudy after Gmail disruption");
             var notification = {
                 done: false,
-                template: "templates/gmail-incompatibility.html"
+                template: "templates/cloudy-fixed.html"
             };
             storage.set({"notification": notification});
         }
     }
     else if (details.reason === "install") {
-        console.log("Version 0.6.0.5 disables Cloudy due to Gmail changes");
-        var notification = {
-            done: false,
-            template: "templates/gmail-incompatibility.html"
-        };
-        storage.set({"notification": notification});
+        // pass
     }
 }
 

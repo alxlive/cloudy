@@ -71,7 +71,9 @@ var RegularView = function () {
                 view_enabled = false;
                 return;
             } 
-            gmail_inputelem.files = filesArray;
+            gmail_inputelem.__defineGetter__("files", function(){
+                return filesArray;
+            });
             if (!gmail_inputelem.parentNode) {
                 gmail_inputelem.style.display = "none";
                 $jQcl(gmail_inputelem).prependTo($jQcl(document.body));
@@ -303,6 +305,7 @@ var RegularView = function () {
                         }
                     });
                 } else {
+                    e.preventDefault();
                     simulateLocalAttachment();
                 }
             });
@@ -320,7 +323,6 @@ var RegularView = function () {
             container.orig_removeChild = container.removeChild;
             container.removeChild = function(child) {
                 child = this.orig_removeChild(child);
-                var currentElem = document.activeElement;
                 if (child.tagName && child.tagName.toLowerCase() === "input" &&
                         child.type && child.type.toLowerCase() === "file") {
                     var parentdiv = top.document.createElement("div");
@@ -365,6 +367,23 @@ var RegularView = function () {
             }
         }
 
+        /* Override the default appendChild method to intercept appending
+         * of the <input type='file'> element we need to catch in order
+         * to modify the default behavior.
+         */ 
+        var interposeAppendChild = function() {
+            var body = top.document.body;
+            body.cloudy_gmail_appendChild = body.appendChild;
+            body.appendChild = function(child) {
+                if (child.tagName && child.tagName.toLowerCase() === "input" &&
+                        child.type && child.type.toLowerCase() === "file") {
+                    initInputElement(child);
+                } 
+                this.cloudy_gmail_appendChild(child);
+                return child;
+            }
+        }
+
         var init = function() {
             // get templates from DOM
             var templates = Templates();
@@ -396,6 +415,7 @@ var RegularView = function () {
             // interpose on key document functions to catch when the user is
             // attaching a file
             interposeCreateElem();
+            interposeAppendChild();
 
             // set View as enabled. Marking this as false effectively disables 
             // the entire extension, as it will no longer receive any inputs.
